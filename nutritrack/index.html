@@ -643,10 +643,23 @@ async function openModal(i){
   try {
     const res = await fetch(`https://api.nal.usda.gov/fdc/v1/food/${preview.fdcId}?api_key=${USDA_KEY}`);
     const full = await res.json();
-    // Merge: use full detail data but keep search metadata
-    selFood = { ...preview, foodNutrients: full.foodNutrients || preview.foodNutrients };
+    console.log('[NutriTrack] Full food detail for', preview.description);
+    console.log('[NutriTrack] fdcId:', preview.fdcId);
+    console.log('[NutriTrack] Total nutrients returned:', full.foodNutrients?.length);
+    console.log('[NutriTrack] First 5 nutrients:', JSON.stringify(full.foodNutrients?.slice(0,5)));
+    // The detail endpoint returns nutrients as { nutrient: { id, name }, amount }
+    // We normalise them to match the format gn() expects
+    const normNutrients = (full.foodNutrients || []).map(n => ({
+      nutrientId: n.nutrient?.id ?? n.nutrientId,
+      nutrientNumber: n.nutrient?.number ?? n.nutrientNumber,
+      value: n.amount ?? n.value ?? 0,
+      amount: n.amount ?? n.value ?? 0,
+    }));
+    selFood = { ...preview, foodNutrients: normNutrients };
+    console.log('[NutriTrack] Normalised. Energy check:', normNutrients.find(n=>n.nutrientId===1008||n.nutrientId===2047||n.nutrientId===2048));
+    console.log('[NutriTrack] Vitamin E check:', normNutrients.find(n=>n.nutrientId===1109||n.nutrientId===1158));
   } catch(e) {
-    // Fallback to search data if detail fetch fails
+    console.error('[NutriTrack] Detail fetch failed:', e);
     selFood = preview;
   }
   updatePreview();
