@@ -274,6 +274,8 @@
     <button class="s-clear" id="searchClear">✕</button>
   </div>
   <div class="spinner" id="searchSpinner"><span class="spin-icon">⟳</span>Searching USDA…</div>
+  <button onclick="rawAPITest()" style="width:100%;padding:12px;background:#7c3aed;border:none;border-radius:8px;color:white;font-family:var(--mono);font-size:13px;cursor:pointer;margin-bottom:12px">🧪 RAW API TEST (tap me first)</button>
+  <div id="raw-dump" style="display:none;background:#0a0a1a;border:1px solid #fbbf24;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;color:#fbbf24;word-break:break-all;white-space:pre-wrap;margin-bottom:12px;max-height:300px;overflow-y:auto"></div>
   <div id="search-results"></div>
 </div>
 
@@ -590,6 +592,60 @@ function buildEfsaTable(){
     `<div class="info-row"><span>${n}</span><span>${i.goal}${i.unit}</span></div>`).join('');
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+async function rawAPITest() {
+  const dump = document.getElementById('raw-dump');
+  dump.style.display = 'block';
+  dump.textContent = 'Fetching...';
+
+  try {
+    // Test 1: search endpoint
+    const r = await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + USDA_KEY + '&query=kiwi&pageSize=1&dataType=Foundation,SR%20Legacy');
+    const d = await r.json();
+    const food = d.foods?.[0];
+    if (!food) { dump.textContent = 'NO FOOD RETURNED\n' + JSON.stringify(d).substring(0,300); return; }
+
+    const nuts = food.foodNutrients || [];
+    let out = '=== SEARCH RESULT ===\n';
+    out += 'Name: ' + food.description + '\n';
+    out += 'dataType: ' + food.dataType + '\n';
+    out += 'fdcId: ' + food.fdcId + '\n';
+    out += 'Total nutrients: ' + nuts.length + '\n\n';
+    out += '=== ALL NUTRIENTS (ndbNum | fdcId | value) ===\n';
+    nuts.forEach(n => {
+      const ndb = n.nutrientNumber || n.nutrient?.number || '??';
+      const id  = n.nutrientId || n.nutrient?.id || '??';
+      const val = n.value ?? n.amount ?? '??';
+      const name = n.nutrientName || n.nutrient?.name || '';
+      out += ndb + ' | ' + id + ' | ' + val + ' | ' + name + '\n';
+    });
+
+    // Test 2: bulk POST
+    out += '\n=== BULK POST TEST ===\n';
+    const r2 = await fetch('https://api.nal.usda.gov/fdc/v1/foods?api_key=' + USDA_KEY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fdcIds: [food.fdcId], format: 'full' })
+    });
+    const d2 = await r2.json();
+    const food2 = Array.isArray(d2) ? d2[0] : d2;
+    const nuts2 = food2?.foodNutrients || [];
+    out += 'Bulk nutrients: ' + nuts2.length + '\n';
+    if (nuts2.length > 0) {
+      out += 'First item shape: ' + JSON.stringify(nuts2[0]).substring(0,150) + '\n';
+      // look for vit E specifically
+      const vitE = nuts2.find(n => {
+        const ndb = String(n.nutrientNumber || n.nutrient?.number || '');
+        const id = n.nutrientId || n.nutrient?.id || 0;
+        return ndb === '323' || id === 1109;
+      });
+      out += 'Vitamin E found: ' + (vitE ? JSON.stringify(vitE) : 'NOT FOUND') + '\n';
+    }
+    dump.textContent = out;
+  } catch(e) {
+    dump.textContent = 'ERROR: ' + e.message + '\nStack: ' + e.stack;
+  }
+}
 </script>
 </body>
 </html>
