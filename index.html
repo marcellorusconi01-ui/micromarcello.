@@ -566,7 +566,7 @@ function openModal(i) {
   const nutCount = selFood.foodNutrients ? selFood.foodNutrients.length : 0;
   const hasVitE = selFood.foodNutrients ? selFood.foodNutrients.some(n => String(n.nutrientNumber) === '323' && (n.value||n.amount) > 0) : false;
   document.getElementById('mmeta').textContent =
-    (selFood.brandOwner ? selFood.brandOwner + ' · ' : '') + (selFood.dataType || '') + ' | ' + nutCount + ' nutrients | VitE:' + (hasVitE ? '✓' : '✗');
+    (selFood.brandOwner ? selFood.brandOwner + ' · ' : '') + (selFood.dataType || '') + ' | ' + nutCount + ' nutrients | VitE:' + (hasVitE ? 'YES' : 'NO');
   document.querySelectorAll('.ubtn').forEach(b => b.classList.remove('on'));
   document.querySelector('.ubtn').classList.add('on');
   updatePrev();
