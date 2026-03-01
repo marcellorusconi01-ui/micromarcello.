@@ -500,12 +500,12 @@ function renderVNR(t) {
     const val = t.m[name] || 0;
     const pct = Math.min(val / info.goal * 100, 150);
     const dp  = Math.min(pct, 100);
-    const col = pct >= 100 ? '#34d399' : pct >= 50 ? info.color : '#f87171';
+    const col = pct >= 100 ? '#34d399' : pct >= 50 ? info.color : val > 0 ? '#f87171' : '#5a6580';
     const unit = info.unit === 'ug' ? 'μg' : info.unit;
     return `<div class="vcard">
-      <div class="vtop"><div class="vname">${name}</div><div class="vpct" style="color:${col}">${Math.round(pct)}%</div></div>
+      <div class="vtop"><div class="vname">${name}</div><div class="vpct" style="color:${col}">${val > 0 ? Math.round(pct)+'%' : '—'}</div></div>
       <div class="vbg"><div class="vfill" style="width:${dp}%;background:${col}"></div></div>
-      <div class="vdet">${val.toFixed(2)} / ${info.goal}${unit}</div>
+      <div class="vdet">${val > 0 ? val.toFixed(2)+' / '+info.goal+unit : 'not in food data'}</div>
     </div>`;
   }).join('');
   document.getElementById('vg1').innerHTML = h;
@@ -520,7 +520,7 @@ async function search(q) {
     const r = await fetch(
       'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY +
       '&query=' + encodeURIComponent(q) +
-      '&pageSize=15&dataType=Foundation,SR%20Legacy,Branded'
+      '&pageSize=15&dataType=SR%20Legacy,Foundation,Branded'
     );
     const d = await r.json();
     sp.classList.remove('on');
@@ -615,7 +615,7 @@ async function apiTest() {
   dbg.style.display = 'block';
   dbg.textContent = 'Fetching kiwi from USDA…\n';
   try {
-    const r = await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY + '&query=kiwi&pageSize=1&dataType=Foundation');
+    const r = await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY + '&query=kiwi&pageSize=1&dataType=SR%20Legacy');
     const d = await r.json();
     const food = d.foods && d.foods[0];
     if (!food) { dbg.textContent = 'NO RESULTS\n' + JSON.stringify(d).slice(0,200); return; }
