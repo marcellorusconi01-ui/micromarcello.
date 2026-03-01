@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -154,7 +153,6 @@
 </div>
 
 <!-- TODAY -->
-
 <div class="screen on" id="s-today">
   <div class="mrow">
     <div class="mc"><div class="v cv" id="tc">0</div><div class="l">kcal</div></div>
@@ -172,7 +170,6 @@
 </div>
 
 <!-- MACROS -->
-
 <div class="screen" id="s-macros">
   <div class="ringwrap">
     <div class="ringouter">
@@ -210,14 +207,12 @@
 </div>
 
 <!-- VNR -->
-
 <div class="screen" id="s-vnr">
   <div class="sechdr" style="margin-top:4px"><h2>VNR Dashboard</h2><span style="font-size:11px;color:var(--text3)">EFSA Standards</span></div>
   <div class="vgrid" id="vg1"></div>
 </div>
 
 <!-- SEARCH -->
-
 <div class="screen" id="s-search">
   <!-- RAW API TEST BUTTON — remove after debugging -->
   <button onclick="apiTest()" style="width:100%;padding:12px;background:#7c3aed;border:none;border-radius:8px;color:white;font-family:monospace;font-size:13px;cursor:pointer;margin-bottom:10px">🧪 Tap to test API — shows raw data</button>
@@ -232,7 +227,6 @@
 </div>
 
 <!-- SETTINGS -->
-
 <div class="screen" id="s-settings">
   <div class="icard" style="margin-top:4px"><h3>About</h3><div class="irow"><span>Database</span><span>USDA FoodData Central</span></div><div class="irow"><span>VNR Standard</span><span>EFSA 2019</span></div><div class="irow"><span>Version</span><span>2.0.0</span></div></div>
   <div class="icard"><h3>Supabase Cloud Sync</h3><input type="text" class="sbinp" id="sburl" placeholder="https://xxx.supabase.co"/><input type="text" class="sbinp" id="sbkey" placeholder="anon key…"/><button class="connbtn" onclick="connectSB()">Connect Supabase</button></div>
@@ -241,7 +235,6 @@
 </div>
 
 <!-- NAV -->
-
 <nav class="nav">
   <button class="nb on" data-s="today" onclick="go('today')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Today</button>
   <button class="nb" data-s="macros" onclick="go('macros')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>Macros</button>
@@ -251,7 +244,6 @@
 </nav>
 
 <!-- MODAL -->
-
 <div class="movl" id="modal" onclick="closeMod(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="mdrag"></div>
@@ -668,6 +660,5 @@ function buildEFSA() {
 }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
-
 </body>
 </html>
