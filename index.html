@@ -25,7 +25,6 @@
     .dpill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text2);font-family:var(--m)}
     .screen{display:none;padding:16px 16px 110px}
     .screen.on{display:block}
-    /* TODAY */
     .mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
     .mc{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:11px 8px;text-align:center}
     .mc .v{font-size:17px;font-weight:600;font-family:var(--m)}
@@ -42,7 +41,6 @@
     .micro-tog.on svg{transform:rotate(180deg)}
     .micro-pan{display:none;background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--rs) var(--rs);padding:12px}
     .micro-pan.on{display:block}
-    /* MACROS */
     .ringwrap{display:flex;flex-direction:column;align-items:center;margin:4px 0 20px}
     .ringouter{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center}
     .ringsvg{transform:rotate(-90deg);position:absolute;inset:0}
@@ -77,7 +75,6 @@
     .goalinp:focus{border-color:var(--accent)}
     .goalunit{font-size:11px;color:var(--text3);width:28px}
     .savebtn{width:100%;padding:12px;background:var(--accent);border:none;border-radius:8px;color:white;font-family:var(--f);font-size:14px;font-weight:600;cursor:pointer;margin-top:6px}
-    /* VNR */
     .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .vcard{background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:11px}
     .vtop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
@@ -86,7 +83,6 @@
     .vbg{height:5px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}
     .vfill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
     .vdet{font-size:9px;color:var(--text3);margin-top:4px;font-family:var(--m)}
-    /* SEARCH */
     .swrap{position:relative;margin-bottom:14px}
     .sinp{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:13px 44px;color:var(--text);font-family:var(--f);font-size:15px;outline:none;transition:border-color .2s}
     .sinp:focus{border-color:var(--accent)}
@@ -102,7 +98,6 @@
     .spin.on{display:block}
     @keyframes rot{to{transform:rotate(360deg)}}
     .spinico{display:inline-block;animation:rot 1s linear infinite;margin-right:6px}
-    /* MODAL */
     .movl{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:flex-end}
     .movl.on{display:flex}
     .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:24px 24px 0 0;width:100%;padding:20px 20px calc(20px + env(safe-area-inset-bottom));animation:sup .28s cubic-bezier(.34,1.2,.64,1)}
@@ -122,7 +117,6 @@
     .ubtn.on{background:var(--accent);color:white}
     .addbtn{width:100%;padding:14px;border-radius:var(--rs);background:var(--accent);border:none;color:white;font-family:var(--f);font-size:15px;font-weight:600;cursor:pointer}
     .addbtn:active{opacity:.85}
-    /* SETTINGS */
     .icard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
     .icard h3{font-size:13px;font-weight:600;margin-bottom:10px}
     .irow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
@@ -131,7 +125,6 @@
     .sbinp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-family:var(--m);font-size:12px;outline:none;margin-bottom:8px}
     .sbinp:focus{border-color:var(--accent)}
     .connbtn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:8px;color:white;font-family:var(--f);font-size:13px;font-weight:600;cursor:pointer}
-    /* MISC */
     .empty{text-align:center;padding:44px 20px;color:var(--text3)}
     .empty p{font-size:13px;line-height:1.6}
     .toast{position:fixed;top:calc(env(safe-area-inset-top) + 62px);left:50%;transform:translateX(-50%) translateY(-8px);background:var(--green);color:#001a0d;padding:9px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:300;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
@@ -139,8 +132,6 @@
     .sechdr{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
     .sechdr h2{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px}
     .sechdr button{font-family:var(--f);font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:500}
-    /* DEBUG */
-    #dbg{display:none;background:#0a0500;border:2px solid #fbbf24;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;color:#fbbf24;word-break:break-all;white-space:pre-wrap;margin-bottom:12px;max-height:60vh;overflow-y:auto}
   </style>
 </head>
 <body>
@@ -152,7 +143,6 @@
   <span class="dpill" id="todayDate"></span>
 </div>
 
-<!-- TODAY -->
 <div class="screen on" id="s-today">
   <div class="mrow">
     <div class="mc"><div class="v cv" id="tc">0</div><div class="l">kcal</div></div>
@@ -169,7 +159,6 @@
   <div id="loglist"></div>
 </div>
 
-<!-- MACROS -->
 <div class="screen" id="s-macros">
   <div class="ringwrap">
     <div class="ringouter">
@@ -206,17 +195,12 @@
   </div>
 </div>
 
-<!-- VNR -->
 <div class="screen" id="s-vnr">
   <div class="sechdr" style="margin-top:4px"><h2>VNR Dashboard</h2><span style="font-size:11px;color:var(--text3)">EFSA Standards</span></div>
   <div class="vgrid" id="vg1"></div>
 </div>
 
-<!-- SEARCH -->
 <div class="screen" id="s-search">
-  <!-- RAW API TEST BUTTON — remove after debugging -->
-  <button onclick="apiTest()" style="width:100%;padding:12px;background:#7c3aed;border:none;border-radius:8px;color:white;font-family:monospace;font-size:13px;cursor:pointer;margin-bottom:10px">🧪 Tap to test API — shows raw data</button>
-  <div id="dbg"></div>
   <div class="swrap">
     <svg class="sico" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
     <input type="text" class="sinp" id="sinp" placeholder="Search foods (USDA)…" autocomplete="off" autocorrect="off"/>
@@ -226,15 +210,13 @@
   <div id="results"></div>
 </div>
 
-<!-- SETTINGS -->
 <div class="screen" id="s-settings">
-  <div class="icard" style="margin-top:4px"><h3>About</h3><div class="irow"><span>Database</span><span>USDA FoodData Central</span></div><div class="irow"><span>VNR Standard</span><span>EFSA 2019</span></div><div class="irow"><span>Version</span><span>2.0.0</span></div></div>
+  <div class="icard" style="margin-top:4px"><h3>About</h3><div class="irow"><span>Database</span><span>USDA FoodData Central</span></div><div class="irow"><span>VNR Standard</span><span>EFSA 2019</span></div><div class="irow"><span>Version</span><span>2.1.0</span></div></div>
   <div class="icard"><h3>Supabase Cloud Sync</h3><input type="text" class="sbinp" id="sburl" placeholder="https://xxx.supabase.co"/><input type="text" class="sbinp" id="sbkey" placeholder="anon key…"/><button class="connbtn" onclick="connectSB()">Connect Supabase</button></div>
   <div class="icard"><h3>EFSA Reference Values</h3><div id="efsatable"></div></div>
   <div style="margin-top:12px"><button onclick="clearLog()" style="width:100%;padding:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:var(--rs);color:var(--red);font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer">Clear Today's Log</button></div>
 </div>
 
-<!-- NAV -->
 <nav class="nav">
   <button class="nb on" data-s="today" onclick="go('today')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Today</button>
   <button class="nb" data-s="macros" onclick="go('macros')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>Macros</button>
@@ -243,7 +225,6 @@
   <button class="nb" data-s="settings" onclick="go('settings')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Settings</button>
 </nav>
 
-<!-- MODAL -->
 <div class="movl" id="modal" onclick="closeMod(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="mdrag"></div>
@@ -266,8 +247,6 @@ const KEY = 'SFdjEvVFDVmToAqw1Eus7PKj6WJ8ZXFTLykcAJCQ';
 const SK  = 'nt2_' + new Date().toDateString();
 const GK  = 'nt2_goals';
 
-// ── EFSA VNR table ──
-// ndb = USDA NDB nutrient number (string) — the RELIABLE cross-format identifier
 const VNR = {
   'Vitamin A':   {goal:800,  unit:'ug', color:'#f59e0b', ndb:'318'},
   'Vitamin C':   {goal:80,   unit:'mg', color:'#10b981', ndb:'401'},
@@ -295,75 +274,116 @@ const VNR = {
   'Manganese':   {goal:2,    unit:'mg', color:'#0f766e', ndb:'315'},
 };
 
-// All NDB numbers that mean "calories"
 const KCAL_NDBS = ['208','957','958'];
 
-// ── CORE: extract a nutrient value from ANY USDA food object format ──
-// Handles search format, detail format, and bulk format
-function getN(food, ndb) {
-  if (!food || !food.foodNutrients) return 0;
-  for (const n of food.foodNutrients) {
-    // Get the NDB number from whatever shape this nutrient is in
+// ── CURATED DATABASE: Correct SR Legacy FDC IDs ──
+// SR Legacy = the richest USDA dataset with full micronutrient profiles.
+// These IDs are in the 167000–175000 range on FoodData Central.
+// Old-style 5-digit IDs like 11457 do NOT work with the FDC API.
+const CURATED = {
+  // Fruits
+  "Kiwifruit, raw":168153,"Apple, raw":171688,"Banana, raw":173944,
+  "Orange, raw":169097,"Strawberry, raw":167762,"Blueberry, raw":171711,
+  "Avocado, raw":171705,"Mango, raw":169910,"Pineapple, raw":169124,
+  "Watermelon, raw":167765,"Grapes, raw":174683,"Peach, raw":169928,
+  "Pear, raw":169118,"Raspberry, raw":167755,"Blackberry, raw":173945,
+  "Cherry, sweet, raw":171719,"Pomegranate, raw":169134,"Papaya, raw":169926,
+  "Plum, raw":169922,
+  // Vegetables
+  "Spinach, raw":168462,"Broccoli, raw":170379,"Carrot, raw":170393,
+  "Tomato, raw":170457,"Kale, raw":168421,"Sweet potato, raw":168482,
+  "Potato, raw":170026,"Garlic, raw":169230,"Onion, raw":170000,
+  "Bell pepper, red, raw":170108,"Cucumber, raw":168409,"Zucchini, raw":169291,
+  "Cauliflower, raw":169986,"Cabbage, raw":169975,"Celery, raw":169988,
+  "Asparagus, raw":168390,"Mushroom, white, raw":169251,"Lettuce, romaine, raw":169247,
+  "Beetroot, raw":169145,"Corn, yellow, raw":170416,"Peas, green, raw":170419,
+  "Brussels sprouts, raw":170383,"Eggplant, raw":168412,
+  // Proteins
+  "Chicken breast, raw":171477,"Beef, ground, raw":174036,"Salmon, raw":175167,
+  "Tuna, raw":175159,"Egg, whole, raw":171287,"Tofu, firm":172467,
+  "Shrimp, raw":175177,"Turkey breast, raw":171496,"Pork loin, raw":167903,
+  "Cod, raw":175110,"Sardine, in oil":175139,"Lamb, loin, raw":174387,
+  // Dairy
+  "Milk, whole":171265,"Yogurt, plain, whole":170886,"Cheese, cheddar":173414,
+  "Cheese, mozzarella":173424,"Greek yogurt, plain":170903,"Butter":173430,
+  // Grains
+  "Rice, white, cooked":168880,"Oats, raw":173904,"Bread, whole wheat":172687,
+  "Pasta, cooked":169737,"Quinoa, cooked":168917,"Bread, white":172688,
+  // Legumes
+  "Lentils, cooked":172421,"Chickpeas, cooked":173757,"Black beans, cooked":175196,
+  "Kidney beans, cooked":173744,"Edamame, cooked":168411,
+  // Nuts & Seeds
+  "Almonds, raw":170567,"Walnuts, raw":170187,"Cashews, raw":170162,
+  "Peanuts, raw":172430,"Sunflower seeds, raw":170562,"Pumpkin seeds, raw":170556,
+  "Chia seeds, raw":170554,"Flaxseeds, raw":169414,"Sesame seeds, raw":170150,
+  // Other
+  "Olive oil":171413,"Honey":169640,"Dark chocolate, 70-85%":170273,
+};
+
+// ── NUTRIENT NORMALISATION ──
+// USDA returns nutrients in different shapes depending on endpoint:
+//   /foods/search   → { nutrientNumber, value }          (flat)
+//   /food/{id}      → { nutrient:{number,name}, amount } (nested)
+//   /foods (batch)  → { nutrientNumber, value }          (flat)
+// We always normalise to { nutrientNumber:string, value:number }.
+
+function normaliseNutrients(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(n => {
     const num = String(
       n.nutrientNumber !== undefined ? n.nutrientNumber :
-      n.nutrient && n.nutrient.number !== undefined ? n.nutrient.number :
-      ''
+      (n.nutrient && n.nutrient.number !== undefined) ? n.nutrient.number : ''
     );
-    if (num === ndb) {
-      const v = n.value !== undefined ? n.value : n.amount !== undefined ? n.amount : 0;
-      if (v > 0) return v;
-    }
-  }
-  return 0;
+    const val = n.value !== undefined ? n.value :
+                n.amount !== undefined ? n.amount : 0;
+    return { nutrientNumber: num, value: val };
+  }).filter(n => n.nutrientNumber && n.value > 0);
 }
 
-function getKcal(food) {
-  if (!food || !food.foodNutrients) return 0;
-  for (const n of food.foodNutrients) {
-    const num = String(
-      n.nutrientNumber !== undefined ? n.nutrientNumber :
-      n.nutrient && n.nutrient.number !== undefined ? n.nutrient.number : ''
-    );
-    if (KCAL_NDBS.includes(num)) {
-      const v = n.value !== undefined ? n.value : n.amount !== undefined ? n.amount : 0;
-      if (v > 0) return v;
-    }
-  }
-  return 0;
+const _cache = {}; // fdcId → { description, dataType, _nutrients[] }
+
+// Fetch full food detail (richest data, works for SR Legacy & Foundation)
+async function fetchFull(fdcId) {
+  if (_cache[fdcId]) return _cache[fdcId];
+  const r = await fetch(
+    'https://api.nal.usda.gov/fdc/v1/food/' + fdcId + '?api_key=' + KEY
+  );
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const d = await r.json();
+  const food = {
+    fdcId: d.fdcId,
+    description: d.description,
+    dataType: d.dataType,
+    servingSize: d.servingSize || null,
+    _nutrients: normaliseNutrients(d.foodNutrients)
+  };
+  _cache[fdcId] = food;
+  return food;
 }
 
-// ── PREFETCH CURATED FOODS ──
-// Fetch all 87 curated foods in batches of 20 at startup using the search endpoint
-// This guarantees nutrient data is ready before user taps anything
-const _cache = {};
+// If a curated food comes back with very few nutrients, search for a better SR Legacy match
+async function fetchFallback(query) {
+  const r = await fetch(
+    'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY +
+    '&query=' + encodeURIComponent(query) +
+    '&pageSize=5&dataType=SR%20Legacy'
+  );
+  const d = await r.json();
+  if (!d.foods || !d.foods.length) return null;
+  // Pick the entry with the most nutrients reported in the search results
+  d.foods.sort((a,b) => (b.foodNutrients||[]).length - (a.foodNutrients||[]).length);
+  return fetchFull(d.foods[0].fdcId);
+}
 
-async function prefetchCurated() {
-  const ids = Object.values(CURATED);
-  const batchSize = 20;
-  for (let i = 0; i < ids.length; i += batchSize) {
-    const batch = ids.slice(i, i + batchSize);
-    try {
-      const r = await fetch(
-        'https://api.nal.usda.gov/fdc/v1/foods?api_key=' + KEY,
-        {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({fdcIds: batch, format: 'abridged'})
-        }
-      );
-      const foods = await r.json();
-      if (Array.isArray(foods)) {
-        foods.forEach(f => {
-          if (f.foodNutrients && f.foodNutrients.length > 0) {
-            // abridged format returns flat { nutrientNumber, value }
-            _cache[f.fdcId] = f;
-          }
-        });
-      }
-    } catch(e) {
-      // Silent fail — will fetch on demand instead
-    }
-  }
+function nutVal(food, ndb) {
+  if (!food || !food._nutrients) return 0;
+  const e = food._nutrients.find(n => n.nutrientNumber === ndb);
+  return e ? e.value : 0;
+}
+function kcalVal(food) {
+  if (!food || !food._nutrients) return 0;
+  const e = food._nutrients.find(n => KCAL_NDBS.includes(n.nutrientNumber));
+  return e ? e.value : 0;
 }
 
 // ── STATE ──
@@ -394,7 +414,6 @@ function saveGoals() {
   renderAll(); toast('Goals saved');
 }
 
-// ── SUPABASE ──
 function connectSB() {
   const u = document.getElementById('sburl').value.trim();
   const k = document.getElementById('sbkey').value.trim();
@@ -405,11 +424,7 @@ function connectSB() {
 function initSB(url, key) {
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-  s.onload = () => {
-    sbClient = window.supabase.createClient(url, key);
-    toast('Supabase connected!');
-    syncSB();
-  };
+  s.onload = () => { sbClient = window.supabase.createClient(url, key); toast('Supabase connected!'); syncSB(); };
   document.head.appendChild(s);
 }
 async function syncSB() {
@@ -420,16 +435,13 @@ async function syncSB() {
 async function saveSB(item) { if (sbClient) await sbClient.from('food_log').insert([item]); }
 async function delSB(id)    { if (sbClient) await sbClient.from('food_log').delete().eq('id', id); }
 
-// ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   loadState(); applyGoalInputs();
   document.getElementById('todayDate').textContent =
     new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short'});
-  const su = localStorage.getItem('sb_u'), sk = localStorage.getItem('sb_k');
-  if (su && sk) initSB(su, sk);
+  const su = localStorage.getItem('sb_u'), sk2 = localStorage.getItem('sb_k');
+  if (su && sk2) initSB(su, sk2);
   renderAll(); buildEFSA();
-  prefetchCurated(); // load curated food nutrients in background
-
   document.getElementById('sinp').addEventListener('input', e => {
     document.getElementById('sclr').style.display = e.target.value ? 'block' : 'none';
     clearTimeout(stimer);
@@ -450,7 +462,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 });
 
-// ── NAV ──
 function go(s) {
   document.querySelectorAll('.screen').forEach(x => x.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(x => x.classList.remove('on'));
@@ -459,189 +470,145 @@ function go(s) {
   if (s === 'search') setTimeout(() => document.getElementById('sinp').focus(), 100);
 }
 
-// ── TOTALS ──
 function totals() {
   return log.reduce((a, x) => {
-    a.cal += x.cal || 0; a.pro += x.pro || 0; a.car += x.car || 0;
-    a.fat += x.fat || 0; a.fi  += x.fi  || 0;
-    Object.keys(VNR).forEach(k => { a.m[k] = (a.m[k] || 0) + (x.m && x.m[k] ? x.m[k] : 0); });
+    a.cal += x.cal||0; a.pro += x.pro||0; a.car += x.car||0;
+    a.fat += x.fat||0; a.fi  += x.fi ||0;
+    Object.keys(VNR).forEach(k => { a.m[k] = (a.m[k]||0) + (x.m&&x.m[k]?x.m[k]:0); });
     return a;
-  }, {cal:0, pro:0, car:0, fat:0, fi:0, m:{}});
+  }, {cal:0,pro:0,car:0,fat:0,fi:0,m:{}});
 }
 
-// ── RENDER ──
 function renderAll() {
   const t = totals();
-  // Today header
   document.getElementById('tc').textContent = Math.round(t.cal);
-  document.getElementById('tp').textContent = t.pro.toFixed(1) + 'g';
-  document.getElementById('tr').textContent = t.car.toFixed(1) + 'g';
-  document.getElementById('tf').textContent = t.fat.toFixed(1) + 'g';
-  renderLog();
-  renderMacros(t);
-  renderVNR(t);
+  document.getElementById('tp').textContent = t.pro.toFixed(1)+'g';
+  document.getElementById('tr').textContent = t.car.toFixed(1)+'g';
+  document.getElementById('tf').textContent = t.fat.toFixed(1)+'g';
+  renderLog(); renderMacros(t); renderVNR(t);
 }
 
 function renderLog() {
   const el = document.getElementById('loglist');
-  if (!log.length) {
-    el.innerHTML = '<div class="empty"><p>No foods logged today.<br>Tap <strong>+ Add Food</strong> to start.</p></div>';
-    return;
-  }
-  el.innerHTML = log.map((x, i) => `
+  if (!log.length) { el.innerHTML='<div class="empty"><p>No foods logged today.<br>Tap <strong>+ Add Food</strong> to start.</p></div>'; return; }
+  el.innerHTML = log.map((x,i) => `
     <div class="fi">
-      <div class="fi-i">
-        <div class="fi-n">${esc(x.name)}</div>
-        <div class="fi-m">${x.amt}g &middot; P:${x.pro.toFixed(1)} C:${x.car.toFixed(1)} F:${x.fat.toFixed(1)}</div>
-      </div>
+      <div class="fi-i"><div class="fi-n">${esc(x.name)}</div>
+      <div class="fi-m">${x.amt}g &middot; P:${x.pro.toFixed(1)} C:${x.car.toFixed(1)} F:${x.fat.toFixed(1)}</div></div>
       <div class="fi-c">${Math.round(x.cal)} kcal</div>
       <button class="delbtn" onclick="delItem(${i})"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
     </div>`).join('');
 }
 
 function renderMacros(t) {
-  const C = 502.65, pct = Math.min(t.cal / goals.cal, 1), over = t.cal > goals.cal;
-  const ring = document.getElementById('cring');
-  ring.style.strokeDashoffset = C - C * pct;
-  ring.style.stroke = over ? 'var(--red)' : pct > 0.85 ? 'var(--yellow)' : 'var(--accent)';
-  document.getElementById('rk').textContent = Math.round(t.cal);
-  document.getElementById('rg').textContent = Math.round(goals.cal);
-  const rem = goals.cal - t.cal, remEl = document.getElementById('rr');
-  remEl.textContent = over ? Math.abs(Math.round(rem)) + ' over' : Math.round(rem) + ' left';
-  remEl.style.color = over ? 'var(--red)' : 'var(--green)';
-  const tc = t.pro * 4 + t.car * 4 + t.fat * 9 || 1;
-  document.getElementById('spp').textContent = Math.round(t.pro*4/tc*100) + '%';
-  document.getElementById('scp').textContent = Math.round(t.car*4/tc*100) + '%';
-  document.getElementById('sfp').textContent = Math.round(t.fat*9/tc*100) + '%';
-  document.getElementById('spg').textContent = t.pro.toFixed(1) + 'g';
-  document.getElementById('scg').textContent = t.car.toFixed(1) + 'g';
-  document.getElementById('sfg').textContent = t.fat.toFixed(1) + 'g';
-  function bar(id, val, goal) {
-    const p = Math.min(val/goal*100, 100), ov = val > goal;
-    document.getElementById('mb' + id).textContent = val.toFixed(1);
-    document.getElementById('mg' + id).textContent = goal;
-    document.getElementById('mf' + id).style.width = p + '%';
-    document.getElementById('mf' + id).style.opacity = ov ? '0.55' : '1';
-    document.getElementById('mp' + id).textContent = Math.round(val/goal*100) + '%';
-    document.getElementById('mo' + id).textContent = ov ? '+' + (val-goal).toFixed(1) + 'g over' : '';
+  const C=502.65, pct=Math.min(t.cal/goals.cal,1), over=t.cal>goals.cal;
+  const ring=document.getElementById('cring');
+  ring.style.strokeDashoffset=C-C*pct;
+  ring.style.stroke=over?'var(--red)':pct>0.85?'var(--yellow)':'var(--accent)';
+  document.getElementById('rk').textContent=Math.round(t.cal);
+  document.getElementById('rg').textContent=Math.round(goals.cal);
+  const rem=goals.cal-t.cal, remEl=document.getElementById('rr');
+  remEl.textContent=over?Math.abs(Math.round(rem))+' over':Math.round(rem)+' left';
+  remEl.style.color=over?'var(--red)':'var(--green)';
+  const tc=t.pro*4+t.car*4+t.fat*9||1;
+  document.getElementById('spp').textContent=Math.round(t.pro*4/tc*100)+'%';
+  document.getElementById('scp').textContent=Math.round(t.car*4/tc*100)+'%';
+  document.getElementById('sfp').textContent=Math.round(t.fat*9/tc*100)+'%';
+  document.getElementById('spg').textContent=t.pro.toFixed(1)+'g';
+  document.getElementById('scg').textContent=t.car.toFixed(1)+'g';
+  document.getElementById('sfg').textContent=t.fat.toFixed(1)+'g';
+  function bar(id,val,goal){
+    const p=Math.min(val/goal*100,100),ov=val>goal;
+    document.getElementById('mb'+id).textContent=val.toFixed(1);
+    document.getElementById('mg'+id).textContent=goal;
+    document.getElementById('mf'+id).style.width=p+'%';
+    document.getElementById('mf'+id).style.opacity=ov?'0.55':'1';
+    document.getElementById('mp'+id).textContent=Math.round(val/goal*100)+'%';
+    document.getElementById('mo'+id).textContent=ov?'+'+(val-goal).toFixed(1)+'g over':'';
   }
-  bar('p', t.pro, goals.pro); bar('c', t.car, goals.car);
-  bar('f', t.fat, goals.fat); bar('fi', t.fi, goals.fi);
+  bar('p',t.pro,goals.pro); bar('c',t.car,goals.car);
+  bar('f',t.fat,goals.fat); bar('fi',t.fi,goals.fi);
 }
 
 function renderVNR(t) {
-  if (!t) t = totals();
-  const h = Object.entries(VNR).map(([name, info]) => {
-    const val = t.m[name] || 0;
-    const pct = Math.min(val / info.goal * 100, 150);
-    const dp  = Math.min(pct, 100);
-    const col = pct >= 100 ? '#34d399' : pct >= 50 ? info.color : val > 0 ? '#f87171' : '#5a6580';
-    const unit = info.unit === 'ug' ? 'μg' : info.unit;
+  if (!t) t=totals();
+  const h=Object.entries(VNR).map(([name,info])=>{
+    const val=t.m[name]||0, pct=Math.min(val/info.goal*100,150), dp=Math.min(pct,100);
+    const col=pct>=100?'#34d399':pct>=50?info.color:val>0?'#f87171':'#5a6580';
+    const unit=info.unit==='ug'?'μg':info.unit;
     return `<div class="vcard">
-      <div class="vtop"><div class="vname">${name}</div><div class="vpct" style="color:${col}">${val > 0 ? Math.round(pct)+'%' : '—'}</div></div>
+      <div class="vtop"><div class="vname">${name}</div><div class="vpct" style="color:${col}">${val>0?Math.round(pct)+'%':'—'}</div></div>
       <div class="vbg"><div class="vfill" style="width:${dp}%;background:${col}"></div></div>
-      <div class="vdet">${val > 0 ? val.toFixed(2)+' / '+info.goal+unit : 'not in food data'}</div>
+      <div class="vdet">${val>0?val.toFixed(2)+' / '+info.goal+unit:'not in food data'}</div>
     </div>`;
   }).join('');
-  document.getElementById('vg1').innerHTML = h;
-  document.getElementById('vg2').innerHTML = h;
+  document.getElementById('vg1').innerHTML=h;
+  document.getElementById('vg2').innerHTML=h;
 }
 
 // ── SEARCH ──
-// ── CURATED FOOD DATABASE ──
-// Verified SR Legacy fdcIds — guaranteed 80-110 nutrients each
-const CURATED = {
-  // Fruits
-  "Kiwifruit, raw":168153,"Apple, raw":9003,"Banana, raw":9040,"Orange, raw":9200,
-  "Strawberry, raw":9316,"Blueberry, raw":9050,"Avocado, raw":9037,"Mango, raw":9176,
-  "Pineapple, raw":9266,"Watermelon, raw":9326,"Grapes, raw":9132,"Peach, raw":9236,
-  "Pear, raw":9252,"Lemon, raw":9159,"Raspberry, raw":9302,"Blackberry, raw":9042,
-  "Cherry, raw":9070,"Pomegranate, raw":9286,"Papaya, raw":9226,"Plum, raw":9279,
-  // Vegetables
-  "Spinach, raw":11457,"Broccoli, raw":11090,"Carrot, raw":11124,"Tomato, raw":11529,
-  "Kale, raw":11233,"Sweet potato, raw":11507,"Potato, raw":11352,"Garlic, raw":11215,
-  "Onion, raw":11282,"Bell pepper, raw":11821,"Cucumber, raw":11205,"Zucchini, raw":11477,
-  "Cauliflower, raw":11135,"Cabbage, raw":11109,"Celery, raw":11143,"Asparagus, raw":11011,
-  "Mushroom, raw":11260,"Lettuce, raw":11252,"Beetroot, raw":11080,"Leek, raw":11246,
-  "Corn, raw":11167,"Peas, raw":11304,"Brussels sprouts, raw":11098,"Eggplant, raw":11209,
-  // Proteins
-  "Chicken breast, raw":5011,"Beef, ground, raw":13347,"Salmon, raw":15076,
-  "Tuna, raw":15121,"Egg, whole, raw":1123,"Tofu, firm":16426,"Shrimp, raw":15152,
-  "Turkey breast, raw":5165,"Pork loin, raw":10006,"Cod, raw":15016,
-  "Sardine, raw":15086,"Lamb, raw":17003,
-  // Dairy
-  "Milk, whole":1077,"Yogurt, plain":1116,"Cheese, cheddar":1009,
-  "Cheese, mozzarella":1028,"Greek yogurt, plain":170903,"Butter":1001,
-  // Grains
-  "Rice, white, cooked":20444,"Oats, raw":8120,"Bread, whole wheat":18069,
-  "Pasta, cooked":20121,"Quinoa, cooked":168917,"Bread, white":18064,
-  // Legumes
-  "Lentils, cooked":16070,"Chickpeas, cooked":16057,"Black beans, cooked":16015,
-  "Kidney beans, cooked":16034,"Edamame, cooked":16425,
-  // Nuts & Seeds
-  "Almonds":12061,"Walnuts":12155,"Cashews":12087,"Peanuts":16087,
-  "Sunflower seeds":12036,"Pumpkin seeds":12014,"Chia seeds":170554,
-  "Flaxseeds":20012,"Sesame seeds":12023,
-  // Other
-  "Olive oil":4053,"Honey":19296,"Dark chocolate, 70%":19904,
-};
+window._srMap = {};
 
 async function search(q) {
-  const sp = document.getElementById('spinner'), rs = document.getElementById('results');
-  sp.classList.add('on'); rs.innerHTML = '';
+  const sp=document.getElementById('spinner'), rs=document.getElementById('results');
+  sp.classList.add('on'); rs.innerHTML='';
+  window._srMap = {};
 
   const ql = q.toLowerCase().trim();
-
-  // 1. Search curated database first (exact USDA SR Legacy entries)
   const curatedMatches = Object.entries(CURATED)
     .filter(([name]) => name.toLowerCase().includes(ql))
     .slice(0, 8);
 
   try {
-    // 2. Also search USDA for anything not in curated list
-    const r = await fetch(
+    const resp = await fetch(
       'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY +
       '&query=' + encodeURIComponent(q) +
-      '&pageSize=10&dataType=SR%20Legacy,Foundation'
+      '&pageSize=12&dataType=SR%20Legacy,Foundation'
     );
-    const d = await r.json();
+    const d = await resp.json();
     sp.classList.remove('on');
 
-    // Build result list: curated first, then USDA results not already in curated
     const curatedIds = new Set(curatedMatches.map(([,id]) => id));
-    const usdaExtras = (d.foods || [])
+
+    // Prefer SR Legacy, then by nutrient count
+    const extras = (d.foods||[])
       .filter(f => !curatedIds.has(f.fdcId))
-      .slice(0, 7);
+      .sort((a,b) => {
+        const diff = (b.dataType==='SR Legacy'?1:0) - (a.dataType==='SR Legacy'?1:0);
+        return diff || (b.foodNutrients||[]).length - (a.foodNutrients||[]).length;
+      })
+      .slice(0, 6);
 
-    window._srMap = {};
-
-    // Add curated as stub entries (will fetch full data on tap)
-    curatedMatches.forEach(([name, fdcId]) => {
-      window._srMap['c_' + fdcId] = { _stub: true, _fdcId: fdcId, description: name, dataType: 'SR Legacy', foodNutrients: [] };
-    });
-    // Add USDA search results
-    usdaExtras.forEach(f => { window._srMap['u_' + f.fdcId] = { ...f, _fdcId: f.fdcId }; });
-
-    const allResults = [
-      ...curatedMatches.map(([name, fdcId]) => ({ _key: 'c_' + fdcId, description: name, dataType: 'SR Legacy', _curated: true, fdcId })),
-      ...usdaExtras.map(f => ({ _key: 'u_' + f.fdcId, ...f, _curated: false }))
+    const all = [
+      ...curatedMatches.map(([name, fdcId]) => ({
+        _key:'c_'+fdcId, fdcId, description:name, dataType:'SR Legacy', _curated:true, _nutrients:[]
+      })),
+      ...extras.map(f => ({
+        _key:'u_'+f.fdcId, fdcId:f.fdcId, description:f.description,
+        dataType:f.dataType, _curated:false,
+        _nutrients: normaliseNutrients(f.foodNutrients)
+      }))
     ];
 
-    if (!allResults.length) { rs.innerHTML = '<div class="empty"><p>No results found.</p></div>'; return; }
+    all.forEach(f => { window._srMap[f._key] = f; });
 
-    var html = '';
-    allResults.forEach(f => {
-      const cal = f._curated ? '?' : Math.round(getKcal(f)) || '?';
+    if (!all.length) { rs.innerHTML='<div class="empty"><p>No results found.</p></div>'; return; }
+
+    rs.innerHTML = all.map(f => {
+      // For USDA search results we already have inline nutrients for calorie display
+      const calEntry = f._nutrients && f._nutrients.find(n => KCAL_NDBS.includes(n.nutrientNumber));
+      const cal = calEntry ? Math.round(calEntry.value) : null;
       const badge = f._curated
-        ? '<span style="color:var(--green);font-size:10px">● Verified (full data)</span>'
-        : '<span style="color:var(--yellow);font-size:10px">● USDA search result</span>';
-      html += '<div class="ritem" data-key="' + f._key + '">';
-      html += '<div class="rname">' + esc(f.description) + '</div>';
-      html += '<div class="rmeta">' + badge + '</div>';
-      html += '<div class="rcal">' + (cal !== '?' ? cal + ' kcal/100g' : '') + '</div>';
-      html += '</div>';
-    });
-    rs.innerHTML = html;
+        ? '<span style="color:var(--green);font-size:10px">★ SR Legacy</span>'
+        : f.dataType==='SR Legacy'
+          ? '<span style="color:var(--accent);font-size:10px">● SR Legacy</span>'
+          : '<span style="color:var(--yellow);font-size:10px">● '+esc(f.dataType||'USDA')+'</span>';
+      return `<div class="ritem" data-key="${f._key}">
+        <div class="rname">${esc(f.description)}</div>
+        <div class="rmeta">${badge}</div>
+        ${cal?'<div class="rcal">'+cal+' kcal/100g</div>':''}
+      </div>`;
+    }).join('');
 
     rs.querySelectorAll('.ritem[data-key]').forEach(el => {
       el.addEventListener('click', () => openModal(el.dataset.key));
@@ -649,177 +616,131 @@ async function search(q) {
 
   } catch(e) {
     sp.classList.remove('on');
-    // Fallback: show only curated matches if network fails
+    // Show curated matches even if network failed
     if (curatedMatches.length) {
-      var html = '';
-      curatedMatches.forEach(([name, fdcId]) => {
-        window._srMap = window._srMap || {};
-        window._srMap['c_' + fdcId] = { _stub: true, _fdcId: fdcId, description: name, dataType: 'SR Legacy', foodNutrients: [] };
-        html += '<div class="ritem" data-key="c_' + fdcId + '"><div class="rname">' + esc(name) + '</div><div class="rmeta"><span style="color:var(--green);font-size:10px">● Verified</span></div></div>';
+      curatedMatches.forEach(([name,fdcId]) => {
+        window._srMap['c_'+fdcId] = {_key:'c_'+fdcId, fdcId, description:name, dataType:'SR Legacy', _curated:true, _nutrients:[]};
       });
-      rs.innerHTML = html;
-      rs.querySelectorAll('.ritem').forEach(el => el.addEventListener('click', () => openModal(el.dataset.key)));
+      rs.innerHTML = curatedMatches.map(([name,fdcId]) =>
+        `<div class="ritem" data-key="c_${fdcId}"><div class="rname">${esc(name)}</div><div class="rmeta"><span style="color:var(--green);font-size:10px">★ SR Legacy</span></div></div>`
+      ).join('');
+      rs.querySelectorAll('.ritem').forEach(el => el.addEventListener('click',()=>openModal(el.dataset.key)));
     } else {
-      rs.innerHTML = '<div class="empty"><p>Search failed: ' + e.message + '</p></div>';
+      rs.innerHTML='<div class="empty"><p>Search failed: '+esc(e.message)+'</p></div>';
     }
   }
 }
-
 
 // ── MODAL ──
 async function openModal(key) {
   let food = window._srMap[key];
   if (!food) return;
 
-  // Show modal immediately
+  selFood = null;
   document.getElementById('mamt').value = 100;
   document.getElementById('mname').textContent = food.description;
-  document.getElementById('mmeta').textContent = food.dataType || '';
-  document.getElementById('mprev').innerHTML = '<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">Loading nutrients…</div>';
-  document.querySelectorAll('.ubtn').forEach(b => b.classList.remove('on'));
+  document.getElementById('mmeta').textContent = 'Loading nutrients…';
+  document.getElementById('mprev').innerHTML =
+    '<div style="grid-column:span 4;text-align:center;padding:12px;color:var(--text3);font-size:12px">⟳ Fetching…</div>';
+  document.querySelectorAll('.ubtn').forEach(b=>b.classList.remove('on'));
   document.querySelector('.ubtn').classList.add('on');
-  document.getElementById('modal').classList.add('on');
   curUnit = 'g';
+  document.getElementById('modal').classList.add('on');
 
-  // Fetch full nutrients for this food using fdcIds filter on search endpoint
-  // This endpoint always returns flat { nutrientNumber, value } format — most reliable
-  if (food._stub || !food.foodNutrients || food.foodNutrients.length < 10) {
-    try {
-      const fdcId = food._fdcId || food.fdcId;
+  try {
+    // Always use the detail endpoint — it returns the most complete data
+    let full = await fetchFull(food.fdcId);
 
-      // Check prefetch cache first
-      let cached = _cache[fdcId];
-
-      if (!cached) {
-        // Not in cache yet — fetch directly
-        const r = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + fdcId + '?api_key=' + KEY);
-        const full = await r.json();
-        if (full.foodNutrients && full.foodNutrients.length > 0) {
-          // Detail format: normalise { nutrient:{number}, amount } -> flat
-          cached = {
-            ...food,
-            foodNutrients: full.foodNutrients.map(n => ({
-              nutrientNumber: String(n.nutrient ? n.nutrient.number : (n.nutrientNumber || '')),
-              value: n.amount !== undefined ? n.amount : (n.value || 0)
-            })).filter(n => n.value > 0 && n.nutrientNumber)
-          };
-          _cache[fdcId] = cached;
+    // If we got very few nutrients and this was a curated entry, try a search-based fallback
+    if (food._curated && full._nutrients.length < 15) {
+      try {
+        // Strip suffixes like ", raw" and search to find a richer SR Legacy match
+        const q = food.description.replace(/, (raw|cooked|whole|plain|salted)$/i,'').trim();
+        const fallback = await fetchFallback(q);
+        if (fallback && fallback._nutrients.length > full._nutrients.length) {
+          fallback.description = food.description; // keep display name
+          full = fallback;
         }
-      }
-
-      if (cached && cached.foodNutrients && cached.foodNutrients.length > 0) {
-        food = { ...food, foodNutrients: cached.foodNutrients, _stub: false };
-        window._srMap[key] = food;
-      }
-    } catch(e) {
-      console.error('Nutrient fetch failed:', e.message);
+      } catch(e2) { /* use whatever we have */ }
     }
+
+    // Merge into map entry
+    food = { ...food, ...full };
+    window._srMap[key] = food;
+
+    document.getElementById('mmeta').textContent =
+      (food.dataType||'SR Legacy') + ' · ' + food._nutrients.length + ' nutrients';
+
+  } catch(e) {
+    document.getElementById('mmeta').textContent = 'Could not load full nutrients';
+    console.error('openModal:', e);
   }
 
   selFood = food;
-  const nutCount = selFood.foodNutrients ? selFood.foodNutrients.length : 0;
-  const hasVitE = selFood.foodNutrients ? selFood.foodNutrients.some(n => String(n.nutrientNumber) === '323') : false;
-  document.getElementById('mmeta').textContent = (selFood.dataType || '') + ' | ' + nutCount + ' nutrients | VitE:' + (hasVitE ? 'YES' : 'NO');
-  document.querySelectorAll('.ubtn').forEach(b => b.classList.remove('on'));
-  document.querySelector('.ubtn').classList.add('on');
   updatePrev();
-  document.getElementById('modal').classList.add('on');
 }
+
 function closeMod(e) { document.getElementById('modal').classList.remove('on'); }
+
 function setUnit(u, btn) {
   curUnit = u;
-  document.querySelectorAll('.ubtn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.ubtn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('mamt').value = u === 'portion' ? (selFood && selFood.servingSize ? selFood.servingSize : 100) : 100;
+  document.getElementById('mamt').value = u==='portion' ? (selFood&&selFood.servingSize?selFood.servingSize:100) : 100;
   updatePrev();
 }
+
 function updatePrev() {
   if (!selFood) return;
-  const a = parseFloat(document.getElementById('mamt').value) || 100;
-  const f = a / 100;
-  const cal = getKcal(selFood) * f;
-  const pro = getN(selFood, '203') * f;
-  const car = getN(selFood, '205') * f;
-  const fat = getN(selFood, '204') * f;
+  const a = parseFloat(document.getElementById('mamt').value)||100, f=a/100;
+  const cal=kcalVal(selFood)*f, pro=nutVal(selFood,'203')*f, car=nutVal(selFood,'205')*f, fat=nutVal(selFood,'204')*f;
   document.getElementById('mprev').innerHTML =
-    '<div class="mpi"><div class="mpv cv">' + Math.round(cal) + '</div><div class="mpl">kcal</div></div>' +
-    '<div class="mpi"><div class="mpv pv">' + pro.toFixed(1) + 'g</div><div class="mpl">Protein</div></div>' +
-    '<div class="mpi"><div class="mpv rv">' + car.toFixed(1) + 'g</div><div class="mpl">Carbs</div></div>' +
-    '<div class="mpi"><div class="mpv fv">' + fat.toFixed(1) + 'g</div><div class="mpl">Fat</div></div>';
+    '<div class="mpi"><div class="mpv cv">'+Math.round(cal)+'</div><div class="mpl">kcal</div></div>'+
+    '<div class="mpi"><div class="mpv pv">'+pro.toFixed(1)+'g</div><div class="mpl">Protein</div></div>'+
+    '<div class="mpi"><div class="mpv rv">'+car.toFixed(1)+'g</div><div class="mpl">Carbs</div></div>'+
+    '<div class="mpi"><div class="mpv fv">'+fat.toFixed(1)+'g</div><div class="mpl">Fat</div></div>';
 }
+
 function addFood() {
   if (!selFood) return;
-  const a = parseFloat(document.getElementById('mamt').value) || 100;
-  const f = a / 100;
-  const m = {};
-  Object.entries(VNR).forEach(([name, info]) => { m[name] = getN(selFood, info.ndb) * f; });
+  const a = parseFloat(document.getElementById('mamt').value)||100, f=a/100;
+  const m={};
+  Object.entries(VNR).forEach(([name,info]) => { m[name] = nutVal(selFood,info.ndb)*f; });
   const item = {
-    id: Date.now(), date: new Date().toDateString(),
-    name: selFood.description, amt: Math.round(a), unit: curUnit,
-    cal: getKcal(selFood) * f,
-    pro: getN(selFood, '203') * f,
-    car: getN(selFood, '205') * f,
-    fat: getN(selFood, '204') * f,
-    fi:  getN(selFood, '291') * f,
-    m
+    id:Date.now(), date:new Date().toDateString(),
+    name:selFood.description, amt:Math.round(a), unit:curUnit,
+    cal:kcalVal(selFood)*f, pro:nutVal(selFood,'203')*f,
+    car:nutVal(selFood,'205')*f, fat:nutVal(selFood,'204')*f,
+    fi:nutVal(selFood,'291')*f, m
   };
   log.push(item); saveLog(); saveSB(item);
   renderAll(); closeMod(); toast('Added'); go('today');
 }
+
 function delItem(i) {
-  const x = log[i]; log.splice(i, 1); saveLog();
+  const x=log[i]; log.splice(i,1); saveLog();
   if (x.id) delSB(x.id);
   renderAll(); toast('Removed');
 }
+
 function clearLog() {
   if (!confirm("Clear today's log?")) return;
-  log = []; localStorage.removeItem(SK);
+  log=[]; localStorage.removeItem(SK);
   renderAll(); toast('Cleared');
 }
 
-// ── RAW API TEST (debug — remove once nutrients confirmed working) ──
-async function apiTest() {
-  const dbg = document.getElementById('dbg');
-  dbg.style.display = 'block';
-  dbg.textContent = 'Fetching kiwi from USDA…\n';
-  try {
-    const r = await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms=kiwi+fruit&search_simple=1&action=process&json=1&page_size=1&sort_by=unique_scans_n&fields=product_name,nutriments');
-    const d = await r.json();
-    const p = d.products && d.products[0];
-    if (!p) { dbg.textContent = 'NO RESULTS'; return; }
-    const n = p.nutriments;
-    let out = 'Food: ' + p.product_name + '\n\n';
-    out += 'RAW nutriments from OFF:\n';
-    Object.entries(n).filter(([k]) => k.endsWith('_100g')).forEach(([k,v]) => {
-      out += k + ': ' + v + '\n';
-    });
-    out += '\n--- kcal: ' + (n['energy-kcal_100g']||0) + '\n';
-    out += '--- VitC: ' + (n['vitamin-c_100g']||0) + ' g/100g = ' + ((n['vitamin-c_100g']||0)*1000) + ' mg\n';
-    out += '--- VitE: ' + (n['vitamin-e_100g']||0) + ' g/100g = ' + ((n['vitamin-e_100g']||0)*1000) + ' mg\n';
-    out += '--- Mg:   ' + (n['magnesium_100g']||0) + ' g/100g = ' + ((n['magnesium_100g']||0)*1000) + ' mg\n';
-    dbg.textContent = out;
-    dbg.onclick = () => { dbg.style.display = 'none'; };
-    dbg.title = 'Tap to close';
-  } catch(e) {
-    dbg.textContent = 'ERROR: ' + e.message;
-  }
-}
-
-// ── HELPERS ──
-function toast(msg, err) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.background = err ? 'var(--red)' : 'var(--green)';
-  t.style.color = err ? 'white' : '#001a0d';
-  t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 2400);
+function toast(msg,err) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=err?'var(--red)':'var(--green)';
+  t.style.color=err?'white':'#001a0d';
+  t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2400);
 }
 function buildEFSA() {
-  document.getElementById('efsatable').innerHTML = Object.entries(VNR).map(([n, i]) =>
-    '<div class="irow"><span>' + n + '</span><span>' + i.goal + (i.unit === 'ug' ? 'μg' : i.unit) + '</span></div>'
+  document.getElementById('efsatable').innerHTML=Object.entries(VNR).map(([n,i])=>
+    '<div class="irow"><span>'+n+'</span><span>'+i.goal+(i.unit==='ug'?'μg':i.unit)+'</span></div>'
   ).join('');
 }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body>
 </html>
