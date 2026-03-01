@@ -1301,6 +1301,11 @@ async function openModal(key){
       {nutrientNumber:'205',value:food.car||0},
       {nutrientNumber:'291',value:food.fi||0},
     ];
+    // Inject micro nutrients from .micro or .m into _nutrients for VNR tracking
+    const microSrc=food.micro||food.m||{};
+    Object.entries(VNR).forEach(([name,info])=>{
+      if(microSrc[name]!==undefined)food._nutrients.push({nutrientNumber:info.ndb,value:microSrc[name]});
+    });
     food._o3=food.o3||0;food._o6=food.o6||0;food._choline=food.choline||0;
     selFood=food;
     document.getElementById('mprev').innerHTML='';
@@ -1659,7 +1664,8 @@ function openCreateFoodModal(existing=null){
     </div>`).join('');
   document.getElementById('cfMicroGrid').innerHTML=CF_MICRO_FIELDS.map(f=>{
     const mkey=f.key.slice(2);
-    const val=existing&&existing.micro&&existing.micro[mkey]!==undefined?existing.micro[mkey]:'';
+    const microSrc=existing&&(existing.micro||existing.m)||{};
+    const val=microSrc[mkey]!==undefined?microSrc[mkey]:'';
     return`<div class="create-field">
       <div class="create-lbl">${f.label}</div>
       <div class="create-field-row">
@@ -1766,7 +1772,8 @@ function addIngredient(idx){
     Object.entries(VNR).forEach(([name,info])=>{per100.m[name]=ndb[info.ndb]||0;});
   }else if(r.source==='custom'){
     const f=r.food;
-    per100={cal:f.cal||0,pro:f.pro||0,car:f.car||0,fat:f.fat||0,fi:f.fi||0,o3:f.o3||0,o6:f.o6||0,choline:f.choline||0,m:{...f.micro||{}}};
+    const micro=f.micro||f.m||{};
+    per100={cal:f.cal||0,pro:f.pro||0,car:f.car||0,fat:f.fat||0,fi:f.fi||0,o3:f.o3||0,o6:f.o6||0,choline:f.choline||0,m:{...micro}};
   }
   _recipeIngredients.push({name:r.name,per100,grams:100});
   document.getElementById('ingrSearch').value='';
