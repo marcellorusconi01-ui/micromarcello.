@@ -344,262 +344,101 @@
 </div>
 
 <script>
+// ── NUTRIENT DEFINITIONS ──
+// Each entry maps: display name -> { goal, unit, NDB number, fdcId, color }
+// We use NDB "nutrientNumber" as primary lookup key — it's consistent across
+// Foundation, SR Legacy AND Branded foods. fdcId is the fallback.
 const VNR = {
-  'Vitamin A':   {goal:800,  unit:'μg',color:'#f59e0b',k:1106},
-  'Vitamin C':   {goal:80,   unit:'mg',color:'#10b981',k:1162},
-  'Vitamin D':   {goal:15,   unit:'μg',color:'#eab308',k:1114},
-  'Vitamin E':   {goal:12,   unit:'mg',color:'#f97316',k:1109},
-  'Vitamin K':   {goal:75,   unit:'μg',color:'#84cc16',k:1185},
-  'Vitamin B1':  {goal:1.1,  unit:'mg',color:'#06b6d4',k:1165},
-  'Vitamin B2':  {goal:1.4,  unit:'mg',color:'#0ea5e9',k:1166},
-  'Niacin B3':   {goal:16,   unit:'mg',color:'#6366f1',k:1167},
-  'Vitamin B6':  {goal:1.4,  unit:'mg',color:'#8b5cf6',k:1175},
-  'Folate B9':   {goal:200,  unit:'μg',color:'#ec4899',k:1177},
-  'Vitamin B12': {goal:2.4,  unit:'μg',color:'#f43f5e',k:1178},
-  'Biotin B7':   {goal:50,   unit:'μg',color:'#a855f7',k:1176},
-  'Pantothenic': {goal:6,    unit:'mg',color:'#14b8a6',k:1170},
-  'Calcium':     {goal:800,  unit:'mg',color:'#3b82f6',k:1087},
-  'Iron':        {goal:14,   unit:'mg',color:'#dc2626',k:1089},
-  'Magnesium':   {goal:375,  unit:'mg',color:'#16a34a',k:1090},
-  'Phosphorus':  {goal:700,  unit:'mg',color:'#ca8a04',k:1091},
-  'Potassium':   {goal:3500, unit:'mg',color:'#9333ea',k:1092},
-  'Sodium':      {goal:2000, unit:'mg',color:'#ea580c',k:1093},
-  'Zinc':        {goal:10,   unit:'mg',color:'#0891b2',k:1095},
-  'Iodine':      {goal:150,  unit:'μg',color:'#d946ef',k:1100},
-  'Selenium':    {goal:55,   unit:'μg',color:'#65a30d',k:1103},
-  'Copper':      {goal:0.9,  unit:'mg',color:'#b45309',k:1098},
-  'Manganese':   {goal:2,    unit:'mg',color:'#0f766e',k:1101},
-  'Chromium':    {goal:40,   unit:'μg',color:'#475569',k:1096},
-  'Molybdenum':  {goal:50,   unit:'μg',color:'#7c3aed',k:1102},
+  'Vitamin A':   {goal:800,  unit:'μg', color:'#f59e0b', ndb:'318',  k:1106},
+  'Vitamin C':   {goal:80,   unit:'mg', color:'#10b981', ndb:'401',  k:1162},
+  'Vitamin D':   {goal:15,   unit:'μg', color:'#eab308', ndb:'328',  k:1114},
+  'Vitamin E':   {goal:12,   unit:'mg', color:'#f97316', ndb:'323',  k:1109},
+  'Vitamin K':   {goal:75,   unit:'μg', color:'#84cc16', ndb:'430',  k:1185},
+  'Vitamin B1':  {goal:1.1,  unit:'mg', color:'#06b6d4', ndb:'404',  k:1165},
+  'Vitamin B2':  {goal:1.4,  unit:'mg', color:'#0ea5e9', ndb:'405',  k:1166},
+  'Niacin B3':   {goal:16,   unit:'mg', color:'#6366f1', ndb:'406',  k:1167},
+  'Vitamin B6':  {goal:1.4,  unit:'mg', color:'#8b5cf6', ndb:'415',  k:1175},
+  'Folate B9':   {goal:200,  unit:'μg', color:'#ec4899', ndb:'417',  k:1177},
+  'Vitamin B12': {goal:2.4,  unit:'μg', color:'#f43f5e', ndb:'418',  k:1178},
+  'Biotin B7':   {goal:50,   unit:'μg', color:'#a855f7', ndb:'416',  k:1176},
+  'Pantothenic': {goal:6,    unit:'mg', color:'#14b8a6', ndb:'410',  k:1170},
+  'Calcium':     {goal:800,  unit:'mg', color:'#3b82f6', ndb:'301',  k:1087},
+  'Iron':        {goal:14,   unit:'mg', color:'#dc2626', ndb:'303',  k:1089},
+  'Magnesium':   {goal:375,  unit:'mg', color:'#16a34a', ndb:'304',  k:1090},
+  'Phosphorus':  {goal:700,  unit:'mg', color:'#ca8a04', ndb:'305',  k:1091},
+  'Potassium':   {goal:3500, unit:'mg', color:'#9333ea', ndb:'306',  k:1092},
+  'Sodium':      {goal:2000, unit:'mg', color:'#ea580c', ndb:'307',  k:1093},
+  'Zinc':        {goal:10,   unit:'mg', color:'#0891b2', ndb:'309',  k:1095},
+  'Iodine':      {goal:150,  unit:'μg', color:'#d946ef', ndb:'314',  k:1100},
+  'Selenium':    {goal:55,   unit:'μg', color:'#65a30d', ndb:'317',  k:1103},
+  'Copper':      {goal:0.9,  unit:'mg', color:'#b45309', ndb:'312',  k:1098},
+  'Manganese':   {goal:2,    unit:'mg', color:'#0f766e', ndb:'315',  k:1101},
+  'Chromium':    {goal:40,   unit:'μg', color:'#475569', ndb:'313',  k:1096},
+  'Molybdenum':  {goal:50,   unit:'μg', color:'#7c3aed', ndb:'316',  k:1102},
 };
 
-const USDA_KEY = 'SFdjEvVFDVmToAqw1Eus7PKj6WJ8ZXFTLykcAJCQ';
-const SK = 'nt_log_' + new Date().toDateString();
-const GK = 'nt_goals';
+// Energy NDB numbers (multiple exist across food types)
+const ENERGY_NDBS = new Set(['208','957','958']);
 
-let foodLog = [], goals = {cal:2000,pro:150,car:250,fat:70,fi:25};
-let selFood = null, curUnit = 'g', sbClient = null, searchTmr = null;
+// Master lookup: get a nutrient value from any USDA food object
+// Handles ALL formats: search results, detail endpoint, bulk endpoint
+function gn(food, targetId) {
+  // Find matching VNR entry to get the NDB number
+  const info = Object.values(VNR).find(v => v.k === targetId);
+  const targetNdb = info?.ndb ?? null;
 
-function load() {
-  try { foodLog = JSON.parse(localStorage.getItem(SK)||'[]'); } catch(e){foodLog=[];}
-  try { const g=JSON.parse(localStorage.getItem(GK)); if(g) goals={...goals,...g}; } catch(e){}
-}
-function applyGoalInputs(){
-  document.getElementById('g-cal').value=goals.cal;
-  document.getElementById('g-pro').value=goals.pro;
-  document.getElementById('g-car').value=goals.car;
-  document.getElementById('g-fat').value=goals.fat;
-  document.getElementById('g-fi').value=goals.fi;
-}
-function saveGoals(){
-  goals={
-    cal:+document.getElementById('g-cal').value||2000,
-    pro:+document.getElementById('g-pro').value||150,
-    car:+document.getElementById('g-car').value||250,
-    fat:+document.getElementById('g-fat').value||70,
-    fi: +document.getElementById('g-fi').value||25,
-  };
-  localStorage.setItem(GK,JSON.stringify(goals));
-  renderAll(); showToast('Goals saved ✓');
-}
+  const nutrients = food.foodNutrients || [];
+  let best = 0;
 
-// Supabase
-function saveSupabase(){
-  const u=document.getElementById('sbUrl').value.trim(), k=document.getElementById('sbKey').value.trim();
-  if(!u||!k){showToast('Enter URL and key','err');return;}
-  localStorage.setItem('sb_u',u); localStorage.setItem('sb_k',k);
-  initSB(u,k);
-}
-function initSB(url,key){
-  const s=document.createElement('script');
-  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-  s.onload=()=>{
-    sbClient=window.supabase.createClient(url,key);
-    document.getElementById('dbDot').classList.add('on');
-    document.getElementById('dbLabel').textContent='Synced';
-    syncSB(); showToast('Supabase connected!');
-  };
-  document.head.appendChild(s);
-}
-async function syncSB(){
-  if(!sbClient)return;
-  const {data}=await sbClient.from('food_log').select('*').eq('date',new Date().toDateString());
-  if(data&&data.length){foodLog=data;localStorage.setItem(SK,JSON.stringify(foodLog));renderAll();}
-}
-async function saveSB(i){if(sbClient)await sbClient.from('food_log').insert([i]);}
-async function delSB(id){if(sbClient)await sbClient.from('food_log').delete().eq('id',id);}
+  for (const n of nutrients) {
+    // Get this nutrient's identifiers — handle all 3 USDA response formats
+    const ndbNum  = String(n.nutrientNumber ?? n.nutrient?.number ?? '');
+    const fdcId   = n.nutrientId ?? n.nutrient?.id ?? 0;
+    const val     = n.value ?? n.amount ?? 0;
 
-// Init
-document.addEventListener('DOMContentLoaded',()=>{
-  load(); applyGoalInputs();
-  const d=new Date();
-  document.getElementById('todayDate').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  const su=localStorage.getItem('sb_u'),sk=localStorage.getItem('sb_k');
-  if(su&&sk) initSB(su,sk);
-  renderAll(); buildEfsaTable();
+    if (val <= 0) continue;
 
-  const inp=document.getElementById('searchInput'),clr=document.getElementById('searchClear');
-  inp.addEventListener('input',e=>{
-    clr.style.display=e.target.value?'block':'none';
-    clearTimeout(searchTmr);
-    if(e.target.value.length<2){document.getElementById('search-results').innerHTML='';return;}
-    searchTmr=setTimeout(()=>doSearch(e.target.value),420);
-  });
-  clr.addEventListener('click',()=>{inp.value='';clr.style.display='none';document.getElementById('search-results').innerHTML='';});
-  document.getElementById('microToggle').addEventListener('click',function(){
-    this.classList.toggle('open');
-    document.getElementById('microPanel').classList.toggle('open');
-  });
-  if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-});
+    // Match by NDB number (most reliable) OR by fdcId (fallback)
+    const ndbMatch = targetNdb && ndbNum === targetNdb;
+    const idMatch  = fdcId === targetId;
 
-function showScreen(n){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('screen-'+n).classList.add('active');
-  document.querySelector('[data-s="'+n+'"]').classList.add('active');
-  if(n==='search') setTimeout(()=>document.getElementById('searchInput').focus(),100);
-}
-
-function totals(){
-  return foodLog.reduce((a,i)=>{
-    a.cal+=i.cal||0; a.pro+=i.pro||0; a.car+=i.car||0; a.fat+=i.fat||0; a.fi+=i.fi||0;
-    Object.keys(VNR).forEach(k=>{ a.m[k]=(a.m[k]||0)+(i.m?.[k]||0); });
-    return a;
-  },{cal:0,pro:0,car:0,fat:0,fi:0,m:{}});
-}
-
-function renderAll(){
-  const t=totals();
-  // Today header
-  document.getElementById('t-cal').textContent=Math.round(t.cal);
-  document.getElementById('t-pro').textContent=t.pro.toFixed(1)+'g';
-  document.getElementById('t-car').textContent=t.car.toFixed(1)+'g';
-  document.getElementById('t-fat').textContent=t.fat.toFixed(1)+'g';
-  renderLog();
-  renderMacros(t);
-  renderVNR(t);
-}
-
-function renderLog(){
-  const el=document.getElementById('food-log');
-  if(!foodLog.length){
-    el.innerHTML=`<div class="empty"><svg width="44" height="44" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><p>No foods logged today.<br>Tap <strong>+ Add Food</strong> to start.</p></div>`;
-    return;
+    if (ndbMatch || idMatch) {
+      if (val > best) best = val;
+    }
   }
-  el.innerHTML=foodLog.map((item,i)=>`
-    <div class="food-item">
-      <div class="fi-info">
-        <div class="fi-name">${esc(item.name)}</div>
-        <div class="fi-meta">${item.amt}g &middot; P:${item.pro.toFixed(1)}g C:${item.car.toFixed(1)}g F:${item.fat.toFixed(1)}g</div>
-      </div>
-      <div class="fi-kcal">${Math.round(item.cal)} kcal</div>
-      <button class="del-btn" onclick="delItem(${i})"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-    </div>`).join('');
+  return best;
 }
 
-function renderMacros(t){
-  // Calorie ring (C = 2π×80 ≈ 502.65)
-  const C=502.65, pct=Math.min(t.cal/goals.cal,1), over=t.cal>goals.cal;
-  const ring=document.getElementById('calRing');
-  ring.style.strokeDashoffset=C-(C*pct);
-  ring.style.stroke=over?'var(--red)':pct>0.85?'var(--yellow)':'var(--accent)';
-  document.getElementById('rk').textContent=Math.round(t.cal);
-  document.getElementById('rg').textContent=Math.round(goals.cal);
-  const remEl=document.getElementById('rr');
-  const rem=goals.cal-t.cal;
-  remEl.textContent=(over?Math.abs(Math.round(rem))+' over':Math.round(rem)+' left');
-  remEl.style.color=over?'var(--red)':'var(--green)';
-
-  // Split %
-  const tc=t.pro*4+t.car*4+t.fat*9||1;
-  document.getElementById('sp-p').textContent=Math.round(t.pro*4/tc*100)+'%';
-  document.getElementById('sp-c').textContent=Math.round(t.car*4/tc*100)+'%';
-  document.getElementById('sp-f').textContent=Math.round(t.fat*9/tc*100)+'%';
-  document.getElementById('sg-p').textContent=t.pro.toFixed(1)+'g';
-  document.getElementById('sg-c').textContent=t.car.toFixed(1)+'g';
-  document.getElementById('sg-f').textContent=t.fat.toFixed(1)+'g';
-
-  // Progress bars
-  function bar(id,val,goal){
-    const p=Math.min(val/goal*100,100), ov=val>goal;
-    document.getElementById('mb-'+id).textContent=val.toFixed(1);
-    document.getElementById('mg-'+id).textContent=goal;
-    document.getElementById('mf-'+id).style.width=p+'%';
-    document.getElementById('mf-'+id).style.opacity=ov?'0.55':'1';
-    document.getElementById('mp-'+id).textContent=Math.round(val/goal*100)+'%';
-    document.getElementById('mo-'+id).textContent=ov?'+'+(val-goal).toFixed(1)+'g over':'';
-  }
-  bar('p',t.pro,goals.pro); bar('c',t.car,goals.car);
-  bar('f',t.fat,goals.fat); bar('fi',t.fi,goals.fi);
-}
-
-function renderVNR(t){
-  if(!t) t=totals();
-  const h=Object.entries(VNR).map(([name,info])=>{
-    const val=t.m[name]||0, pct=Math.min((val/info.goal)*100,150);
-    const dp=Math.min(pct,100), col=pct>=100?'#34d399':pct>=50?info.color:'#f87171';
-    return `<div class="vnr-card">
-      <div class="vnr-top"><div class="vnr-name">${name}</div><div class="vnr-pct" style="color:${col}">${Math.round(pct)}%</div></div>
-      <div class="vnr-bar-bg"><div class="vnr-bar-fill" style="width:${dp}%;background:${col}"></div></div>
-      <div class="vnr-detail">${val.toFixed(2)} / ${info.goal}${info.unit}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('vnr-grid').innerHTML=h;
-  document.getElementById('micro-inline').innerHTML=h;
-}
-
-// Nutrient ID aliases — USDA uses different IDs for same nutrient across food types
-const NID = {
-  1008:[1008,2047,2048], // Energy kcal (incl. Atwater variants)
-  1003:[1003],           // Protein
-  1004:[1004],           // Fat
-  1005:[1005],           // Carbs
-  1079:[1079],           // Fibre
-  1106:[1106],           // Vitamin A
-  1162:[1162],           // Vitamin C
-  1114:[1114],           // Vitamin D
-  1109:[1109,1158],      // Vitamin E (alpha-tocopherol + total)
-  1185:[1185],           // Vitamin K
-  1165:[1165],           // B1 Thiamin
-  1166:[1166],           // B2 Riboflavin
-  1167:[1167],           // B3 Niacin
-  1175:[1175],           // B6
-  1177:[1177],           // B9 Folate
-  1178:[1178],           // B12
-  1176:[1176],           // Biotin
-  1170:[1170],           // Pantothenic
-  1087:[1087],           // Calcium
-  1089:[1089],           // Iron
-  1090:[1090],           // Magnesium
-  1091:[1091],           // Phosphorus
-  1092:[1092],           // Potassium
-  1093:[1093],           // Sodium
-  1095:[1095],           // Zinc
-  1100:[1100],           // Iodine
-  1103:[1103],           // Selenium
-  1098:[1098],           // Copper
-  1101:[1101],           // Manganese
-  1096:[1096],           // Chromium
-  1102:[1102],           // Molybdenum
-};
-
-// Robust nutrient getter — tries all known aliases, handles both search & detail formats
-function gn(food, id){
-  const aliases = NID[id] || [id];
-  for (const a of aliases) {
-    const n = food.foodNutrients?.find(n =>
-      n.nutrientId===a || parseInt(n.nutrientNumber)===a || n.nutrient?.id===a
-    );
-    if (n) {
-      const val = n.value ?? n.amount ?? 0;
-      if (val > 0) return val;
+// Special energy getter — checks all energy NDB numbers
+function getEnergy(food) {
+  const nutrients = food.foodNutrients || [];
+  for (const n of nutrients) {
+    const ndb = String(n.nutrientNumber ?? n.nutrient?.number ?? '');
+    const id  = n.nutrientId ?? n.nutrient?.id ?? 0;
+    const val = n.value ?? n.amount ?? 0;
+    if (val > 0 && (ENERGY_NDBS.has(ndb) || id === 1008 || id === 2047 || id === 2048)) {
+      return val;
     }
   }
   return 0;
 }
 
-// Search — Foundation & SR Legacy first (complete data), Branded as fallback
+// Normalise any USDA food object so gn() can read it reliably
+function normaliseFood(food) {
+  if (!food?.foodNutrients?.length) return food;
+  // Already normalised or search format — check if first item has nutrientId directly
+  const first = food.foodNutrients[0];
+  if (first.nutrientId !== undefined) return food; // already flat format
+  // Detail/bulk format: { nutrient: {id, number}, amount } -> flatten
+  const normNutrients = food.foodNutrients.map(n => ({
+    nutrientId:     n.nutrient?.id     ?? n.nutrientId     ?? 0,
+    nutrientNumber: String(n.nutrient?.number ?? n.nutrientNumber ?? ''),
+    value:  n.amount ?? n.value ?? 0,
+    amount: n.amount ?? n.value ?? 0,
+  }));
+  return { ...food, foodNutrients: normNutrients };
+}
+
 // Single-request search using /foods?fdcIds= bulk endpoint
 // Strategy: search first to get fdcIds, then fetch ALL full details in one POST
 async function doSearch(q){
@@ -642,7 +481,7 @@ async function doSearch(q){
         value:  n.amount ?? n.value ?? 0,
         amount: n.amount ?? n.value ?? 0,
       }));
-      return { ...f, foodNutrients: normNutrients, _fullLoaded: true };
+      return { ...f, foodNutrients: normNutrients, _fullLoaded: true, _nutrientCount: normNutrients.length };
     });
 
     sp.classList.remove('show');
@@ -654,7 +493,7 @@ async function doSearch(q){
       const badge = isWhole
         ? '<span style="color:var(--green);font-size:10px">● Complete data</span>'
         : `<span style="color:var(--text3);font-size:10px">${f.dataType||''}</span>`;
-      const fullTag = f._fullLoaded ? '<span style="color:var(--green);font-size:9px"> ✓full</span>' : '';
+      const fullTag = f._fullLoaded ? `<span style="color:var(--green);font-size:9px"> ✓${f._nutrientCount}</span>` : '<span style="color:var(--red);font-size:9px"> ✗no full data</span>';
       return `<div class="result-item" onclick="openModal(${i})">
         <div class="r-name">${esc(f.description)}</div>
         <div class="r-meta">${br}${badge}${fullTag}</div>
@@ -690,7 +529,7 @@ function setUnit(u,btn){
 function updatePreview(){
   if(!selFood)return;
   const a=parseFloat(document.getElementById('m-amt').value)||100, f=a/100;
-  const cal=gn(selFood,1008)*f,pro=gn(selFood,1003)*f,car=gn(selFood,1005)*f,fat=gn(selFood,1004)*f;
+  const cal=getEnergy(selFood)*f,pro=gn(selFood,1003)*f,car=gn(selFood,1005)*f,fat=gn(selFood,1004)*f;
   document.getElementById('m-prev').innerHTML=`
     <div class="prev-item"><div class="prev-v cal-v">${Math.round(cal)}</div><div class="prev-l">kcal</div></div>
     <div class="prev-item"><div class="prev-v pro-v">${pro.toFixed(1)}g</div><div class="prev-l">Protein</div></div>
@@ -699,13 +538,13 @@ function updatePreview(){
 }
 function confirmAdd(){
   if(!selFood)return;
-  const a=parseFloat(document.getElementById('m-amt').value)||100, f=a/100, fd=selFood;
+  const a=parseFloat(document.getElementById('m-amt').value)||100, f=a/100, fd=normaliseFood(selFood);
   const m={};
   Object.entries(VNR).forEach(([n,i])=>{ m[n]=gn(fd,i.k)*f; });
   const item={
     id:Date.now(), date:new Date().toDateString(),
     name:fd.description, amt:Math.round(a), unit:curUnit,
-    cal:gn(fd,1008)*f, pro:gn(fd,1003)*f, car:gn(fd,1005)*f,
+    cal:getEnergy(fd)*f, pro:gn(fd,1003)*f, car:gn(fd,1005)*f,
     fat:gn(fd,1004)*f, fi:gn(fd,1079)*f, m
   };
   foodLog.push(item);
