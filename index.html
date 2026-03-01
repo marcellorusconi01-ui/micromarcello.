@@ -526,8 +526,20 @@ async function search(q) {
     sp.classList.remove('on');
     const foods = d.foods || [];
     if (!foods.length) { rs.innerHTML = '<div class="empty"><p>No results found.</p></div>'; return; }
-    window._sr = foods;
-    rs.innerHTML = foods.map((f, i) => {
+    // Sort: whole foods first, beverages/juices last
+    const sorted = [...foods].sort((a, b) => {
+      const aJunk = /beverage|drink|juice|cocktail/i.test(a.description);
+      const bJunk = /beverage|drink|juice|cocktail/i.test(b.description);
+      const aWhole = a.dataType === 'Foundation' || a.dataType === 'SR Legacy';
+      const bWhole = b.dataType === 'Foundation' || b.dataType === 'SR Legacy';
+      if (aJunk && !bJunk) return 1;
+      if (!aJunk && bJunk) return -1;
+      if (aWhole && !bWhole) return -1;
+      if (!aWhole && bWhole) return 1;
+      return 0;
+    });
+    window._sr = sorted;
+    rs.innerHTML = sorted.map((f, i) => {
       const cal = getKcal(f);
       const isWhole = f.dataType === 'Foundation' || f.dataType === 'SR Legacy';
       const badge = isWhole
@@ -615,7 +627,7 @@ async function apiTest() {
   dbg.style.display = 'block';
   dbg.textContent = 'Fetching kiwi from USDA…\n';
   try {
-    const r = await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY + '&query=kiwi&pageSize=1&dataType=SR%20Legacy');
+    const r = await fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY + '&query=kiwifruit+raw&pageSize=1&dataType=SR%20Legacy');
     const d = await r.json();
     const food = d.foods && d.foods[0];
     if (!food) { dbg.textContent = 'NO RESULTS\n' + JSON.stringify(d).slice(0,200); return; }
