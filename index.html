@@ -188,6 +188,23 @@
     .sechdr h2{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px}
     .sechdr button{font-family:var(--f);font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:500}
     .vsection-hdr{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;padding:0 2px}
+    /* SUPPLEMENT */
+    .supp-btn{width:100%;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:var(--rs);padding:12px;color:var(--purple);font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:14px}
+    .supp-btn:active{opacity:.8}
+    .supp-modal{max-height:88vh;overflow-y:auto}
+    .supp-name-inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;color:var(--text);font-family:var(--f);font-size:14px;outline:none;margin-bottom:14px}
+    .supp-name-inp:focus{border-color:var(--purple)}
+    .supp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .supp-field{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 10px}
+    .supp-lbl{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .supp-row{display:flex;align-items:center;gap:5px}
+    .supp-inp{flex:1;background:none;border:none;color:var(--text);font-family:var(--m);font-size:13px;outline:none;width:0}
+    .supp-unit{font-size:10px;color:var(--text3);flex-shrink:0}
+    /* VNR EDIT */
+    .vcard-edit{background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 3px;line-height:1;border-radius:4px;flex-shrink:0}
+    .vcard-edit:hover{color:var(--accent);background:rgba(79,158,255,.1)}
+    .vtop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;gap:4px}
+    .vtop-left{display:flex;align-items:center;gap:4px;min-width:0}
   </style>
 </head>
 <body>
@@ -266,9 +283,9 @@
     <div class="goalcard">
       <h3>Daily Goals</h3>
       <div class="goalrow"><label>Calories</label><input type="number" class="goalinp" id="gcal" value="2000"/><span class="goalunit">kcal</span></div>
-      <div class="goalrow"><label>Protein</label><input type="number" class="goalinp" id="gpro" value="150"/><span class="goalunit">g</span></div>
-      <div class="goalrow"><label>Carbs</label><input type="number" class="goalinp" id="gcar" value="250"/><span class="goalunit">g</span></div>
-      <div class="goalrow"><label>Fat</label><input type="number" class="goalinp" id="gfat" value="70"/><span class="goalunit">g</span></div>
+      <div class="goalrow"><label>Protein</label><input type="number" class="goalinp" id="gpro" value="150" oninput="syncCalFromMacros()"/><span class="goalunit">g</span></div>
+      <div class="goalrow"><label>Carbs</label><input type="number" class="goalinp" id="gcar" value="250" oninput="syncCalFromMacros()"/><span class="goalunit">g</span></div>
+      <div class="goalrow"><label>Fat</label><input type="number" class="goalinp" id="gfat" value="70" oninput="syncCalFromMacros()"/><span class="goalunit">g</span></div>
       <div class="goalrow"><label>Fibre</label><input type="number" class="goalinp" id="gfi" value="25"/><span class="goalunit">g</span></div>
       <button class="savebtn" onclick="saveGoals()">Save Goals</button>
     </div>
@@ -277,10 +294,10 @@
   <!-- VNR -->
   <div class="screen" id="s-vnr">
     <div class="sechdr" style="margin-top:4px"><h2>VNR Dashboard</h2><span style="font-size:11px;color:var(--text3)">EFSA Standards</span></div>
-    <div class="vsection-hdr">Essential Fatty Acids & Choline</div>
-    <div id="omegaSection"></div>
-    <div class="vsection-hdr">Vitamins</div>
+    <div class="vsection-hdr">Vitamins &amp; Minerals</div>
     <div class="vgrid" id="vg1"></div>
+    <div class="vsection-hdr" style="margin-top:20px">Essential Fatty Acids</div>
+    <div id="omegaSection"></div>
   </div>
 
   <!-- CALENDAR -->
@@ -301,6 +318,10 @@
       <input type="text" class="sinp" id="sinp" placeholder="Search foods (USDA)…" autocomplete="off" autocorrect="off"/>
       <button class="sclr" id="sclr">✕</button>
     </div>
+    <button class="supp-btn" onclick="openSuppModal()">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add Supplement Manually
+    </button>
     <div class="spin" id="spinner"><span class="spinico">⟳</span>Searching USDA…</div>
     <div id="results"></div>
   </div>
@@ -338,6 +359,33 @@
       </div>
     </div>
     <button class="addbtn" onclick="addFood()">Add to Log</button>
+  </div>
+</div>
+
+<!-- SUPPLEMENT MODAL -->
+<div class="movl" id="suppModal" onclick="closeSuppModal(event)">
+  <div class="modal supp-modal" onclick="event.stopPropagation()">
+    <div class="mdrag"></div>
+    <div class="mtitle">💊 Add Supplement</div>
+    <div class="mmeta" style="margin-bottom:10px">Enter the nutrient amounts from the supplement label</div>
+    <input type="text" class="supp-name-inp" id="suppName" placeholder="Supplement name (e.g. Vitamin D3 2000 IU)"/>
+    <div class="supp-grid" id="suppGrid"></div>
+    <button class="addbtn" style="margin-top:14px" onclick="addSupplement()">Add to Today's Log</button>
+  </div>
+</div>
+
+<!-- VNR EDIT MODAL -->
+<div class="movl" id="vnrEditModal" onclick="closeVnrEdit(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="max-height:80vh;overflow-y:auto">
+    <div class="mdrag"></div>
+    <div class="mtitle" id="vnrEditTitle">Edit Nutrient</div>
+    <div class="mmeta" id="vnrEditMeta" style="margin-bottom:16px"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <input type="number" class="minp" id="vnrEditVal" min="0" step="0.01" placeholder="0"/>
+      <span id="vnrEditUnit" style="font-size:13px;color:var(--text2);flex-shrink:0;width:32px"></span>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:16px">This adds a manual entry to today's log for this nutrient only.</div>
+    <button class="addbtn" onclick="saveVnrEdit()">Save</button>
   </div>
 </div>
 
@@ -517,15 +565,29 @@ function applyGoalInputs() {
   document.getElementById('gfi').value  = goals.fi;
 }
 function saveGoals() {
-  goals = {
-    cal: +document.getElementById('gcal').value || 2000,
-    pro: +document.getElementById('gpro').value || 150,
-    car: +document.getElementById('gcar').value || 250,
-    fat: +document.getElementById('gfat').value || 70,
-    fi:  +document.getElementById('gfi').value  || 25,
-  };
+  const pro = +document.getElementById('gpro').value || 0;
+  const car = +document.getElementById('gcar').value || 0;
+  const fat = +document.getElementById('gfat').value || 0;
+  const fi  = +document.getElementById('gfi').value  || 0;
+  const calInput = +document.getElementById('gcal').value || 0;
+  // Auto-calculate calories from macros (protein 4kcal/g, carbs 4kcal/g, fat 9kcal/g)
+  // If user left calories at 0 or blank, derive from macros; otherwise trust their input
+  const calFromMacros = Math.round(pro * 4 + car * 4 + fat * 9);
+  const cal = calInput > 0 ? calInput : calFromMacros > 0 ? calFromMacros : 2000;
+  // Sync the cal field so user can see it
+  document.getElementById('gcal').value = cal;
+  goals = { cal, pro: pro||150, car: car||250, fat: fat||70, fi: fi||25 };
   localStorage.setItem(userGoalKey(currentUser), JSON.stringify(goals));
   renderAll(); toast('Goals saved');
+}
+
+// Live-update calorie goal input as user types P/C/F values
+function syncCalFromMacros() {
+  const pro = +document.getElementById('gpro').value || 0;
+  const car = +document.getElementById('gcar').value || 0;
+  const fat = +document.getElementById('gfat').value || 0;
+  const derived = Math.round(pro * 4 + car * 4 + fat * 9);
+  if (derived > 0) document.getElementById('gcal').value = derived;
 }
 
 // ── SUPABASE ──
@@ -665,24 +727,59 @@ function renderMacros(t) {
 
 function renderVNR(t) {
   if (!t) t = totals();
+  const editIcon = `<svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536M9 11l-4 4v4h4l4-4-4-4zm6.232-5.768a2 2 0 012.828 2.828L7 19H3v-4L15.232 5.232z"/></svg>`;
 
-  // ── Omega balance card ──
-  const o3 = t.o3 || 0, o6 = t.o6 || 0, choline = t.choline || 0;
+  // ── Build choline card (goes in the vitamins/minerals grid) ──
+  const choline = t.choline || 0;
+  const cholinePct = Math.round(choline / CHOLINE_GOAL * 100);
+  const chol_col = cholinePct >= 100 ? '#34d399' : cholinePct >= 50 ? '#a78bfa' : choline > 0 ? '#f87171' : '#5a6580';
+  const cholineCard = `<div class="vcard">
+    <div class="vtop">
+      <div class="vtop-left"><div class="vname">Choline</div><button class="vcard-edit" onclick="openVnrEdit('Choline')" title="Edit manually">${editIcon}</button></div>
+      <div class="vpct" style="color:${chol_col}">${choline>0?cholinePct+'%':'—'}</div>
+    </div>
+    <div class="vbg"><div class="vfill" style="width:${Math.min(cholinePct,100)}%;background:${chol_col}"></div></div>
+    <div class="vdet">${choline>0?choline.toFixed(1)+'mg / '+CHOLINE_GOAL+'mg AI':' no data'}</div>
+  </div>`;
+
+  // ── Vitamins & minerals grid (VNR entries + choline) ──
+  const vnrCards = Object.entries(VNR).map(([name,info]) => {
+    const val=t.m[name]||0, pct=Math.min(val/info.goal*100,150), dp=Math.min(pct,100);
+    const col=pct>=100?'#34d399':pct>=50?info.color:val>0?'#f87171':'#5a6580';
+    const unit=info.unit==='ug'?'μg':info.unit;
+    return `<div class="vcard">
+      <div class="vtop">
+        <div class="vtop-left"><div class="vname">${name}</div><button class="vcard-edit" onclick="openVnrEdit('${name}')" title="Edit manually">${editIcon}</button></div>
+        <div class="vpct" style="color:${col}">${val>0?Math.round(pct)+'%':'—'}</div>
+      </div>
+      <div class="vbg"><div class="vfill" style="width:${dp}%;background:${col}"></div></div>
+      <div class="vdet">${val>0?val.toFixed(2)+' / '+info.goal+unit:' not in food data'}</div>
+    </div>`;
+  }).join('') + cholineCard;
+
+  // vg1 = full VNR screen grid
+  const vg1 = document.getElementById('vg1');
+  if (vg1) vg1.innerHTML = vnrCards;
+
+  // vg2 = collapsed micronutrient panel on Today tab (vitamins/minerals only, no omega)
+  const vg2 = document.getElementById('vg2');
+  if (vg2) vg2.innerHTML = vnrCards;
+
+  // ── Omega section (bottom of VNR screen only) ──
+  const o3 = t.o3 || 0, o6 = t.o6 || 0;
   const total_fa = o3 + o6 || 0.001;
-  const o3pct = (o3/total_fa*100).toFixed(0), o6pct = (o6/total_fa*100).toFixed(0);
-  const ratio = o6 > 0 ? (o6/o3).toFixed(1) : '—';
+  const o3pct = Math.round(o3/total_fa*100), o6pct = Math.round(o6/total_fa*100);
+  const ratio = o6 > 0 && o3 > 0 ? (o6/o3).toFixed(1) : '—';
   const ratioNum = o6 > 0 && o3 > 0 ? o6/o3 : null;
   const ratioClass = ratioNum === null ? '' : ratioNum <= 4 ? 'good' : ratioNum <= 8 ? 'warn' : 'bad';
-  const ratioMsg = ratioNum === null ? 'No data yet' : ratioNum <= 4 ? 'Optimal balance ✓' : ratioNum <= 8 ? 'Slightly high — eat more fatty fish, walnuts, flaxseeds' : 'High — aim for more omega-3 rich foods';
+  const ratioMsg = ratioNum === null ? 'No data yet — log foods to see your balance' : ratioNum <= 4 ? 'Optimal balance ✓' : ratioNum <= 8 ? 'Slightly high — eat more fatty fish, walnuts or flaxseeds' : 'High — significantly increase omega-3 rich foods';
+  const o3_dp = Math.min(o3/O3_GOAL*100, 100);
+  const o6_dp = Math.min(o6/O6_GOAL*100, 100);
+  const o3_col = o3_dp >= 100 ? '#34d399' : o3 > 0 ? '#4f9eff' : '#5a6580';
+  const o6_col = o6_dp >= 100 ? '#34d399' : o6 > 0 ? '#fb923c' : '#5a6580';
 
-  const cholinePct = Math.round(choline / CHOLINE_GOAL * 100);
-  const o3_pct_goal = Math.min(o3 / O3_GOAL * 100, 100);
-  const o6_pct_goal = Math.min(o6 / O6_GOAL * 100, 100);
-  const chol_col = cholinePct >= 100 ? '#34d399' : cholinePct >= 50 ? '#a78bfa' : choline > 0 ? '#f87171' : '#5a6580';
-  const o3_col  = o3_pct_goal >= 100 ? '#34d399' : o3 > 0 ? '#4f9eff' : '#5a6580';
-  const o6_col  = o6_pct_goal >= 100 ? '#34d399' : o6 > 0 ? '#fb923c' : '#5a6580';
-
-  document.getElementById('omegaSection').innerHTML = `
+  const omegaEl = document.getElementById('omegaSection');
+  if (omegaEl) omegaEl.innerHTML = `
     <div class="ocard">
       <div class="ocard-title">Omega-3 vs Omega-6 Balance</div>
       <div class="obar-wrap">
@@ -696,39 +793,20 @@ function renderVNR(t) {
         </div>
         <div class="oratio ${ratioClass}">ratio ${ratio}:1</div>
       </div>
-      <div class="osub">${ratioMsg}<br>Target: ≤4:1 (Ω6:Ω3) · Optimal intake: ${O3_GOAL}g Ω3, ${O6_GOAL}g Ω6/day</div>
+      <div class="osub">${ratioMsg}<br>Target: ≤4:1 · Goal: ${O3_GOAL}g Ω3 · ${O6_GOAL}g Ω6/day</div>
     </div>
-    <div class="vgrid" style="margin-bottom:8px">
+    <div class="vgrid" style="margin-bottom:16px">
       <div class="vcard">
-        <div class="vtop"><div class="vname">Omega-3 total</div><div class="vpct" style="color:${o3_col}">${o3>0?Math.round(o3/O3_GOAL*100)+'%':'—'}</div></div>
-        <div class="vbg"><div class="vfill" style="width:${o3_pct_goal}%;background:${o3_col}"></div></div>
+        <div class="vtop"><div class="vtop-left"><div class="vname">Omega-3 total</div></div><div class="vpct" style="color:${o3_col}">${o3>0?Math.round(o3/O3_GOAL*100)+'%':'—'}</div></div>
+        <div class="vbg"><div class="vfill" style="width:${o3_dp}%;background:${o3_col}"></div></div>
         <div class="vdet">${o3>0?o3.toFixed(2)+'g / '+O3_GOAL+'g AI':' no data'}</div>
       </div>
       <div class="vcard">
-        <div class="vtop"><div class="vname">Omega-6 total</div><div class="vpct" style="color:${o6_col}">${o6>0?Math.round(o6/O6_GOAL*100)+'%':'—'}</div></div>
-        <div class="vbg"><div class="vfill" style="width:${o6_pct_goal}%;background:${o6_col}"></div></div>
+        <div class="vtop"><div class="vtop-left"><div class="vname">Omega-6 total</div></div><div class="vpct" style="color:${o6_col}">${o6>0?Math.round(o6/O6_GOAL*100)+'%':'—'}</div></div>
+        <div class="vbg"><div class="vfill" style="width:${o6_dp}%;background:${o6_col}"></div></div>
         <div class="vdet">${o6>0?o6.toFixed(2)+'g / '+O6_GOAL+'g AI':' no data'}</div>
       </div>
-      <div class="vcard">
-        <div class="vtop"><div class="vname">Choline</div><div class="vpct" style="color:${chol_col}">${choline>0?cholinePct+'%':'—'}</div></div>
-        <div class="vbg"><div class="vfill" style="width:${Math.min(cholinePct,100)}%;background:${chol_col}"></div></div>
-        <div class="vdet">${choline>0?choline.toFixed(1)+'mg / '+CHOLINE_GOAL+'mg AI':' no data'}</div>
-      </div>
     </div>`;
-
-  // ── Regular vitamins/minerals ──
-  const h = Object.entries(VNR).map(([name,info]) => {
-    const val=t.m[name]||0, pct=Math.min(val/info.goal*100,150), dp=Math.min(pct,100);
-    const col=pct>=100?'#34d399':pct>=50?info.color:val>0?'#f87171':'#5a6580';
-    const unit=info.unit==='ug'?'μg':info.unit;
-    return `<div class="vcard">
-      <div class="vtop"><div class="vname">${name}</div><div class="vpct" style="color:${col}">${val>0?Math.round(pct)+'%':'—'}</div></div>
-      <div class="vbg"><div class="vfill" style="width:${dp}%;background:${col}"></div></div>
-      <div class="vdet">${val>0?val.toFixed(2)+' / '+info.goal+unit:' not in food data'}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('vg1').innerHTML = h;
-  document.getElementById('vg2').innerHTML = h;
 }
 
 // ── CALENDAR ──
@@ -990,6 +1068,173 @@ function buildEFSA() {
   ).join('');
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── SUPPLEMENT MODAL ──
+// All trackable nutrients for the supplement entry form
+const SUPP_FIELDS = [
+  // Macros
+  {key:'cal',   label:'Calories',   unit:'kcal', group:'macro'},
+  {key:'pro',   label:'Protein',    unit:'g',    group:'macro'},
+  {key:'car',   label:'Carbs',      unit:'g',    group:'macro'},
+  {key:'fat',   label:'Fat',        unit:'g',    group:'macro'},
+  {key:'fi',    label:'Fibre',      unit:'g',    group:'macro'},
+  // Omega / choline
+  {key:'o3',      label:'Omega-3',   unit:'g',  group:'fa'},
+  {key:'o6',      label:'Omega-6',   unit:'g',  group:'fa'},
+  {key:'choline', label:'Choline',   unit:'mg', group:'fa'},
+  // Vitamins (mapped from VNR keys)
+  {key:'m_Vitamin A',   label:'Vitamin A',   unit:'μg', group:'vit'},
+  {key:'m_Vitamin C',   label:'Vitamin C',   unit:'mg', group:'vit'},
+  {key:'m_Vitamin D',   label:'Vitamin D',   unit:'μg', group:'vit'},
+  {key:'m_Vitamin E',   label:'Vitamin E',   unit:'mg', group:'vit'},
+  {key:'m_Vitamin K',   label:'Vitamin K',   unit:'μg', group:'vit'},
+  {key:'m_Vitamin B1',  label:'Vitamin B1',  unit:'mg', group:'vit'},
+  {key:'m_Vitamin B2',  label:'Vitamin B2',  unit:'mg', group:'vit'},
+  {key:'m_Niacin B3',   label:'Niacin B3',   unit:'mg', group:'vit'},
+  {key:'m_Vitamin B6',  label:'Vitamin B6',  unit:'mg', group:'vit'},
+  {key:'m_Folate B9',   label:'Folate B9',   unit:'μg', group:'vit'},
+  {key:'m_Vitamin B12', label:'Vitamin B12', unit:'μg', group:'vit'},
+  {key:'m_Biotin',      label:'Biotin',      unit:'μg', group:'vit'},
+  {key:'m_Pantothenic', label:'Pantothenic', unit:'mg', group:'vit'},
+  // Minerals
+  {key:'m_Calcium',    label:'Calcium',    unit:'mg', group:'min'},
+  {key:'m_Iron',       label:'Iron',       unit:'mg', group:'min'},
+  {key:'m_Magnesium',  label:'Magnesium',  unit:'mg', group:'min'},
+  {key:'m_Phosphorus', label:'Phosphorus', unit:'mg', group:'min'},
+  {key:'m_Potassium',  label:'Potassium',  unit:'mg', group:'min'},
+  {key:'m_Sodium',     label:'Sodium',     unit:'mg', group:'min'},
+  {key:'m_Zinc',       label:'Zinc',       unit:'mg', group:'min'},
+  {key:'m_Iodine',     label:'Iodine',     unit:'μg', group:'min'},
+  {key:'m_Selenium',   label:'Selenium',   unit:'μg', group:'min'},
+  {key:'m_Copper',     label:'Copper',     unit:'mg', group:'min'},
+  {key:'m_Manganese',  label:'Manganese',  unit:'mg', group:'min'},
+];
+
+function openSuppModal() {
+  document.getElementById('suppName').value = '';
+  // Build the grid of fields
+  document.getElementById('suppGrid').innerHTML = SUPP_FIELDS.map(f => `
+    <div class="supp-field">
+      <div class="supp-lbl">${f.label}</div>
+      <div class="supp-row">
+        <input class="supp-inp" type="number" min="0" step="any" placeholder="0" data-key="${f.key}" id="sf_${f.key}"/>
+        <span class="supp-unit">${f.unit}</span>
+      </div>
+    </div>`).join('');
+  document.getElementById('suppModal').classList.add('on');
+  setTimeout(() => document.getElementById('suppName').focus(), 120);
+}
+
+function closeSuppModal(e) {
+  if (!e || e.target === document.getElementById('suppModal'))
+    document.getElementById('suppModal').classList.remove('on');
+}
+
+function addSupplement() {
+  const name = document.getElementById('suppName').value.trim() || 'Supplement';
+  const m = {};
+  let hasAny = false;
+
+  // Build the log item from filled-in fields
+  const item = {
+    id: Date.now(), date: new Date().toDateString(),
+    name: '💊 ' + name, amt: 1, unit: 'serving',
+    cal:0, pro:0, car:0, fat:0, fi:0, o3:0, o6:0, choline:0, m:{},
+    isSupp: true
+  };
+
+  SUPP_FIELDS.forEach(f => {
+    const el = document.getElementById('sf_' + f.key);
+    const val = parseFloat(el ? el.value : '') || 0;
+    if (val <= 0) return;
+    hasAny = true;
+    if (f.key.startsWith('m_')) {
+      const mkey = f.key.slice(2); // strip 'm_'
+      item.m[mkey] = val;
+    } else {
+      item[f.key] = val;
+    }
+  });
+
+  if (!hasAny) { toast('Enter at least one nutrient value', 1); return; }
+
+  log.push(item); saveLog(); saveSB(item);
+  renderAll();
+  document.getElementById('suppModal').classList.remove('on');
+  toast('💊 ' + name + ' added');
+  go('today');
+}
+
+// ── VNR MANUAL EDIT ──
+let _vnrEditKey = null;
+
+// Choline lives directly on item (item.choline), not in item.m
+// All VNR keys live in item.m[name]
+function openVnrEdit(name) {
+  _vnrEditKey = name;
+  const t = totals();
+  let current, unit, goal;
+
+  if (name === 'Choline') {
+    current = (t.choline || 0);
+    unit = 'mg'; goal = CHOLINE_GOAL + 'mg AI';
+  } else {
+    const info = VNR[name];
+    if (!info) return;
+    current = t.m[name] || 0;
+    unit = info.unit === 'ug' ? 'μg' : info.unit;
+    goal = info.goal + unit;
+  }
+
+  document.getElementById('vnrEditTitle').textContent = 'Edit: ' + name;
+  document.getElementById('vnrEditMeta').textContent =
+    'Current today: ' + current.toFixed(2) + unit + ' · Goal: ' + goal;
+  document.getElementById('vnrEditUnit').textContent = unit;
+  document.getElementById('vnrEditVal').value = '';
+  document.getElementById('vnrEditVal').placeholder = current.toFixed(2) || '0';
+  document.getElementById('vnrEditModal').classList.add('on');
+  setTimeout(() => document.getElementById('vnrEditVal').focus(), 120);
+}
+
+function closeVnrEdit(e) {
+  if (!e || e.target === document.getElementById('vnrEditModal'))
+    document.getElementById('vnrEditModal').classList.remove('on');
+  _vnrEditKey = null;
+}
+
+function saveVnrEdit() {
+  if (!_vnrEditKey) return;
+  const val = parseFloat(document.getElementById('vnrEditVal').value);
+  if (isNaN(val) || val < 0) { toast('Enter a valid amount', 1); return; }
+  const name = _vnrEditKey;
+
+  // Remove any existing manual entry for this nutrient
+  const existingIdx = log.findIndex(x => x.isManualEdit && x.editKey === name);
+  if (existingIdx !== -1) log.splice(existingIdx, 1);
+
+  // Build item — choline goes on top-level, VNR nutrients go in m{}
+  const m = {};
+  const item = {
+    id: Date.now(), date: new Date().toDateString(),
+    name: '✏️ ' + name + ' (manual)',
+    amt: 1, unit: 'entry',
+    cal:0, pro:0, car:0, fat:0, fi:0, o3:0, o6:0, choline:0,
+    m, isManualEdit: true, editKey: name
+  };
+
+  if (name === 'Choline') {
+    item.choline = val;
+  } else {
+    m[name] = val;
+  }
+
+  log.push(item); saveLog();
+  renderAll();
+  document.getElementById('vnrEditModal').classList.remove('on');
+  _vnrEditKey = null;
+  toast(name + ' updated');
+  renderVNR(totals());
+}
 </script>
 </body>
 </html>
