@@ -600,120 +600,85 @@ function gn(food, id){
 }
 
 // Search — Foundation & SR Legacy first (complete data), Branded as fallback
+// Single-request search using /foods?fdcIds= bulk endpoint
+// Strategy: search first to get fdcIds, then fetch ALL full details in one POST
 async function doSearch(q){
-  const sp=document.getElementById('searchSpinner'),rs=document.getElementById('search-results');
+  const sp=document.getElementById('searchSpinner'), rs=document.getElementById('search-results');
   sp.classList.add('show'); rs.innerHTML='';
-  try{
+  try {
+    // Step 1: search to get fdcIds (Foundation/SR Legacy first)
     const [r1,r2] = await Promise.all([
-      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=10&dataType=Foundation,SR%20Legacy`),
-      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=8&dataType=Branded`)
+      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=8&dataType=Foundation,SR%20Legacy`),
+      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=6&dataType=Branded`)
     ]);
-    const [d1,d2] = await Promise.all([r1.json(),r2.json()]);
-    sp.classList.remove('show');
-    const merged = [...(d1.foods||[]), ...(d2.foods||[])].slice(0,15);
-    if(!merged.length){rs.innerHTML='<div class="empty"><p>No results found.</p></div>';return;}
+    const [d1,d2] = await Promise.all([r1.json(), r2.json()]);
+    const merged = [...(d1.foods||[]), ...(d2.foods||[])].slice(0,12);
 
-    // DEBUG: fetch full detail for first result immediately to show what we get
-    if(merged[0]) {
-      try {
-        const testId = merged[0].fdcId;
-        const testRes = await fetch(`https://api.nal.usda.gov/fdc/v1/food/${testId}?api_key=${USDA_KEY}`);
-        const testFull = await testRes.json();
-        const nutCount = testFull.foodNutrients?.length || 0;
-        const sampleNut = testFull.foodNutrients?.[0];
-        showDebug(
-          'fdcId:' + testId + ' | nutrients:' + nutCount +
-          ' | sample:' + JSON.stringify(sampleNut).substring(0,120)
-        );
-      } catch(de) {
-        showDebug('DETAIL FETCH ERROR: ' + de.message + ' | fdcId was: ' + merged[0].fdcId);
-      }
+    if(!merged.length){ sp.classList.remove('show'); rs.innerHTML='<div class="empty"><p>No results found.</p></div>'; return; }
+
+    // Step 2: fetch FULL nutrient details for all results in ONE bulk POST request
+    const fdcIds = merged.map(f => f.fdcId);
+    const bulkRes = await fetch(`https://api.nal.usda.gov/fdc/v1/foods?api_key=${USDA_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fdcIds, format: 'full' })
+    });
+    const bulkData = await bulkRes.json();
+
+    // Build a lookup map: fdcId -> full food object
+    const fullMap = {};
+    if (Array.isArray(bulkData)) {
+      bulkData.forEach(f => { fullMap[f.fdcId] = f; });
     }
 
-    rs.innerHTML=merged.map((f,i)=>{
-      const c=gn(f,1008);
-      const br=f.brandOwner?`<span style="color:var(--accent);font-size:10px">${esc(f.brandOwner)}</span> · `:'';
-      const isWhole=f.dataType==='Foundation'||f.dataType==='SR Legacy';
-      const badge=isWhole
-        ?'<span style="color:var(--green);font-size:10px">● Whole food</span>'
-        :`<span style="color:var(--text3);font-size:10px">${f.dataType||''}</span>`;
+    // Merge search metadata with full nutrient data
+    window._sr = merged.map(f => {
+      const full = fullMap[f.fdcId];
+      if (!full || !full.foodNutrients?.length) return f; // fallback to search data
+      // Normalise detail format { nutrient:{id}, amount } to flat { nutrientId, value }
+      const normNutrients = full.foodNutrients.map(n => ({
+        nutrientId:     n.nutrient?.id     ?? n.nutrientId     ?? 0,
+        nutrientNumber: String(n.nutrient?.number ?? n.nutrientNumber ?? ''),
+        value:  n.amount ?? n.value ?? 0,
+        amount: n.amount ?? n.value ?? 0,
+      }));
+      return { ...f, foodNutrients: normNutrients, _fullLoaded: true };
+    });
+
+    sp.classList.remove('show');
+
+    rs.innerHTML = window._sr.map((f,i) => {
+      const c = gn(f, 1008);
+      const isWhole = f.dataType==='Foundation' || f.dataType==='SR Legacy';
+      const br = f.brandOwner ? `<span style="color:var(--accent);font-size:10px">${esc(f.brandOwner)}</span> · ` : '';
+      const badge = isWhole
+        ? '<span style="color:var(--green);font-size:10px">● Complete data</span>'
+        : `<span style="color:var(--text3);font-size:10px">${f.dataType||''}</span>`;
+      const fullTag = f._fullLoaded ? '<span style="color:var(--green);font-size:9px"> ✓full</span>' : '';
       return `<div class="result-item" onclick="openModal(${i})">
         <div class="r-name">${esc(f.description)}</div>
-        <div class="r-meta">${br}${badge}</div>
-        <div class="r-cals">${c>0?Math.round(c)+' kcal/100g':'<span style="color:var(--text3)">no calorie data</span>'}</div>
+        <div class="r-meta">${br}${badge}${fullTag}</div>
+        <div class="r-cals">${c > 0 ? Math.round(c)+' kcal/100g' : '<span style="color:var(--text3)">no calorie data</span>'}</div>
       </div>`;
     }).join('');
-    window._sr=merged;
-  }catch(e){sp.classList.remove('show');rs.innerHTML='<div class="empty"><p>Search failed: '+e.message+'</p></div>';}
+
+  } catch(e) {
+    sp.classList.remove('show');
+    rs.innerHTML = '<div class="empty"><p>Search failed: ' + e.message + '</p></div>';
+  }
 }
-async function openModal(i){
-  const preview = window._sr[i];
-  // Show modal immediately with loading state
-  selFood = preview; curUnit='g';
-  document.getElementById('m-amt').value=100;
-  document.getElementById('m-name').textContent=preview.description;
-  document.getElementById('m-meta').textContent=(preview.brandOwner?preview.brandOwner+' · ':'')+( preview.dataType||'');
+
+function openModal(i){
+  selFood = window._sr[i]; curUnit = 'g';
+  document.getElementById('m-amt').value = 100;
+  document.getElementById('m-name').textContent = selFood.description;
+  document.getElementById('m-meta').textContent = (selFood.brandOwner ? selFood.brandOwner+' · ' : '') + (selFood.dataType||'');
   document.querySelectorAll('.u-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('.u-btn').classList.add('active');
-  document.getElementById('m-prev').innerHTML='<div style="text-align:center;padding:12px;color:var(--text3);font-size:13px"><span class="spin-icon">⟳</span> Loading full nutrition data…</div>';
-  document.getElementById('addModal').classList.add('open');
-
-  // Fetch FULL food detail from /food/{fdcId}
-  try {
-    const url = `https://api.nal.usda.gov/fdc/v1/food/${preview.fdcId}?api_key=${USDA_KEY}`;
-    const res = await fetch(url);
-    const full = await res.json();
-
-    if (!full.foodNutrients || full.foodNutrients.length === 0) {
-      showDebug('API returned 0 nutrients! fdcId: ' + preview.fdcId + ' dataType: ' + preview.dataType);
-      selFood = preview;
-    } else {
-      // Detail endpoint shape: { nutrient: { id, number }, amount }
-      // Search endpoint shape: { nutrientId, nutrientNumber, value }
-      // Normalise to a consistent shape gn() can read
-      const normNutrients = full.foodNutrients.map(n => {
-        const id  = n.nutrient?.id    ?? n.nutrientId    ?? 0;
-        const num = n.nutrient?.number ?? n.nutrientNumber ?? '';
-        const val = (n.amount !== undefined && n.amount !== null) ? n.amount
-                  : (n.value  !== undefined && n.value  !== null) ? n.value : 0;
-        return { nutrientId: id, nutrientNumber: String(num), value: val, amount: val };
-      });
-
-      selFood = { ...preview, foodNutrients: normNutrients };
-
-      // Visible debug info
-      const kcal  = normNutrients.find(n => [1008,2047,2048].includes(n.nutrientId));
-      const vitE  = normNutrients.find(n => [1109,1158].includes(n.nutrientId));
-      const vitC  = normNutrients.find(n => n.nutrientId === 1162);
-      showDebug(
-        'Total nutrients: ' + normNutrients.length +
-        ' | kcal: ' + (kcal ? kcal.value + ' (id:'+kcal.nutrientId+')' : 'MISSING') +
-        ' | VitE: ' + (vitE ? vitE.value : 'MISSING') +
-        ' | VitC: ' + (vitC ? vitC.value : 'MISSING')
-      );
-    }
-  } catch(e) {
-    showDebug('FETCH ERROR: ' + e.message);
-    selFood = preview;
-  }
   updatePreview();
+  document.getElementById('addModal').classList.add('open');
 }
 
-function showDebug(msg) {
-  // Show a temporary visible debug bar at top of screen
-  let el = document.getElementById('debug-bar');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'debug-bar';
-    el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#1a0a00;color:#fbbf24;font-size:11px;padding:8px 12px;font-family:monospace;line-height:1.5;border-bottom:1px solid #fbbf24;white-space:pre-wrap;word-break:break-all';
-    document.body.appendChild(el);
-  }
-  el.textContent = '🔍 DEBUG: ' + msg;
-  el.style.display = 'block';
-  // Tap to dismiss
-  el.onclick = () => el.style.display = 'none';
-  console.log('[NutriTrack]', msg);
-}
 function closeModal(e){document.getElementById('addModal').classList.remove('open');}
 function setUnit(u,btn){
   curUnit=u;
