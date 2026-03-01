@@ -1623,9 +1623,10 @@ function closeDots(){
 }
 function editCustomItem(){
   if(!_dotsContext)return;
+  const {type,idx}=_dotsContext;
   closeDots();
-  if(_dotsContext.type==='food')openCreateFoodModal(customFoods[_dotsContext.idx]);
-  else openCreateRecipeModal(recipes[_dotsContext.idx]);
+  if(type==='food')openCreateFoodModal(customFoods[idx]);
+  else openCreateRecipeModal(recipes[idx]);
 }
 function deleteCustomItem(){
   if(!_dotsContext)return;
