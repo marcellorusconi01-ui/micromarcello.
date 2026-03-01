@@ -471,6 +471,20 @@ async function doSearch(q){
     }
 
     // Merge search metadata with full nutrient data
+    // RAW DUMP — shows first food's raw nutrients on screen so we can debug
+    if (merged[0]) {
+      const rawNuts = merged[0].foodNutrients || [];
+      const dump = rawNuts.slice(0,6).map(n =>
+        (n.nutrientNumber||n.nutrient?.number||'?') + ':' + (n.value??n.amount??'?')
+      ).join(' | ');
+      rs.innerHTML = '<div style="background:#1a0a00;color:#fbbf24;padding:10px;font-size:11px;font-family:monospace;border-radius:8px;margin-bottom:10px;word-break:break-all">'
+        + '🔍 ' + merged[0].description + '<br>'
+        + 'dataType: ' + merged[0].dataType + ' | fdcId: ' + merged[0].fdcId + '<br>'
+        + 'nutrients in response: ' + rawNuts.length + '<br>'
+        + 'first 6 (ndbNum:val): ' + dump
+        + '</div>';
+    }
+
     window._sr = merged.map(f => {
       const full = fullMap[f.fdcId];
       if (!full || !full.foodNutrients?.length) return f; // fallback to search data
