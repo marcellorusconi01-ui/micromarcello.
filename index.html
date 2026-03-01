@@ -517,32 +517,29 @@ async function search(q) {
   const sp = document.getElementById('spinner'), rs = document.getElementById('results');
   sp.classList.add('on'); rs.innerHTML = '';
   try {
-    // Open Food Facts API — free, no key, excellent micronutrient coverage
     const r = await fetch(
       'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' + encodeURIComponent(q) +
       '&search_simple=1&action=process&json=1&page_size=20&sort_by=unique_scans_n' +
-      '&fields=product_name,brands,nutriments,serving_size,categories_tags,image_small_url'
+      '&fields=product_name,brands,nutriments,serving_size'
     );
     const d = await r.json();
     sp.classList.remove('on');
 
-    const products = (d.products || []).filter(p =>
-      p.product_name &&
-      p.nutriments &&
-      p.nutriments['energy-kcal_100g'] > 0
-    ).slice(0, 15);
+    const products = (d.products || []).filter(function(p) {
+      return p.product_name && p.nutriments && p.nutriments['energy-kcal_100g'] > 0;
+    }).slice(0, 15);
 
-    if (!products.length) { rs.innerHTML = '<div class="empty"><p>No results found.</p></div>'; return; }
+    if (!products.length) {
+      rs.innerHTML = '<div class="empty"><p>No results found.</p></div>';
+      return;
+    }
 
-    // Convert OFF format to our internal format
     window._srMap = {};
-    products.forEach((p, i) => {
-      const id = 'off_' + i;
-      const n = p.nutriments;
-      // Map Open Food Facts nutriments to our NDB-keyed format
+    products.forEach(function(p, i) {
+      var id = 'off' + i;
+      var n = p.nutriments;
       window._srMap[id] = {
         _id: id,
-        _off: true,
         description: p.product_name,
         brandOwner: p.brands || '',
         dataType: 'Open Food Facts',
@@ -553,44 +550,50 @@ async function search(q) {
           {nutrientNumber:'204', value: n['fat_100g'] || 0},
           {nutrientNumber:'205', value: n['carbohydrates_100g'] || 0},
           {nutrientNumber:'291', value: n['fiber_100g'] || 0},
-          {nutrientNumber:'307', value: n['sodium_100g'] ? n['sodium_100g']*1000 : 0},
-          {nutrientNumber:'306', value: n['potassium_100g'] ? n['potassium_100g']*1000 : 0},
-          {nutrientNumber:'301', value: n['calcium_100g'] ? n['calcium_100g']*1000 : 0},
-          {nutrientNumber:'303', value: n['iron_100g'] ? n['iron_100g']*1000 : 0},
-          {nutrientNumber:'304', value: n['magnesium_100g'] ? n['magnesium_100g']*1000 : 0},
-          {nutrientNumber:'305', value: n['phosphorus_100g'] ? n['phosphorus_100g']*1000 : 0},
-          {nutrientNumber:'309', value: n['zinc_100g'] ? n['zinc_100g']*1000 : 0},
-          {nutrientNumber:'401', value: n['vitamin-c_100g'] ? n['vitamin-c_100g']*1000 : 0},
-          {nutrientNumber:'323', value: n['vitamin-e_100g'] ? n['vitamin-e_100g']*1000 : 0},
-          {nutrientNumber:'318', value: n['vitamin-a_100g'] ? n['vitamin-a_100g']*1000000 : 0},
-          {nutrientNumber:'328', value: n['vitamin-d_100g'] ? n['vitamin-d_100g']*1000000 : 0},
-          {nutrientNumber:'430', value: n['vitamin-k_100g'] ? n['vitamin-k_100g']*1000000 : 0},
-          {nutrientNumber:'418', value: n['vitamin-b12_100g'] ? n['vitamin-b12_100g']*1000000 : 0},
-          {nutrientNumber:'415', value: n['vitamin-b6_100g'] ? n['vitamin-b6_100g']*1000 : 0},
-          {nutrientNumber:'404', value: n['vitamin-b1_100g'] ? n['vitamin-b1_100g']*1000 : 0},
-          {nutrientNumber:'405', value: n['vitamin-b2_100g'] ? n['vitamin-b2_100g']*1000 : 0},
-          {nutrientNumber:'406', value: n['vitamin-pp_100g'] ? n['vitamin-pp_100g']*1000 : 0},
-          {nutrientNumber:'417', value: n['folates_100g'] ? n['folates_100g']*1000000 : 0},
-          {nutrientNumber:'317', value: n['selenium_100g'] ? n['selenium_100g']*1000000 : 0},
-          {nutrientNumber:'312', value: n['copper_100g'] ? n['copper_100g']*1000 : 0},
-          {nutrientNumber:'315', value: n['manganese_100g'] ? n['manganese_100g']*1000 : 0},
-        ].filter(n => n.value > 0)
+          {nutrientNumber:'307', value: (n['sodium_100g'] || 0) * 1000},
+          {nutrientNumber:'306', value: (n['potassium_100g'] || 0) * 1000},
+          {nutrientNumber:'301', value: (n['calcium_100g'] || 0) * 1000},
+          {nutrientNumber:'303', value: (n['iron_100g'] || 0) * 1000},
+          {nutrientNumber:'304', value: (n['magnesium_100g'] || 0) * 1000},
+          {nutrientNumber:'305', value: (n['phosphorus_100g'] || 0) * 1000},
+          {nutrientNumber:'309', value: (n['zinc_100g'] || 0) * 1000},
+          {nutrientNumber:'401', value: (n['vitamin-c_100g'] || 0) * 1000},
+          {nutrientNumber:'323', value: (n['vitamin-e_100g'] || 0) * 1000},
+          {nutrientNumber:'328', value: (n['vitamin-d_100g'] || 0) * 1000000},
+          {nutrientNumber:'430', value: (n['vitamin-k_100g'] || 0) * 1000000},
+          {nutrientNumber:'418', value: (n['vitamin-b12_100g'] || 0) * 1000000},
+          {nutrientNumber:'415', value: (n['vitamin-b6_100g'] || 0) * 1000},
+          {nutrientNumber:'404', value: (n['vitamin-b1_100g'] || 0) * 1000},
+          {nutrientNumber:'405', value: (n['vitamin-b2_100g'] || 0) * 1000},
+          {nutrientNumber:'406', value: (n['vitamin-pp_100g'] || 0) * 1000},
+          {nutrientNumber:'317', value: (n['selenium_100g'] || 0) * 1000000},
+          {nutrientNumber:'312', value: (n['copper_100g'] || 0) * 1000},
+          {nutrientNumber:'315', value: (n['manganese_100g'] || 0) * 1000},
+          {nutrientNumber:'417', value: (n['folates_100g'] || 0) * 1000000},
+        ].filter(function(x) { return x.value > 0; })
       };
     });
 
-    rs.innerHTML = products.map((p, i) => {
-      const id = 'off_' + i;
-      const food = window._srMap[id];
-      const cal = getKcal(food);
-      const nutCount = food.foodNutrients.length;
-      const brand = p.brands ? '<span style="color:var(--accent);font-size:10px">' + esc(p.brands) + '</span> · ' : '';
-      const badge = '<span style="color:var(--green);font-size:10px">● Open Food Facts (' + nutCount + ' nutrients)</span>';
-      return '<div class="ritem" onclick="openModal('' + id + '')">' +
-        '<div class="rname">' + esc(p.product_name) + '</div>' +
-        '<div class="rmeta">' + brand + badge + '</div>' +
-        '<div class="rcal">' + (cal > 0 ? Math.round(cal) + ' kcal/100g' : 'no calorie data') + '</div>' +
-        '</div>';
-    }).join('');
+    var html = '';
+    products.forEach(function(p, i) {
+      var id = 'off' + i;
+      var food = window._srMap[id];
+      var cal = getKcal(food);
+      var brand = p.brands ? p.brands + ' · ' : '';
+      var nutCount = food.foodNutrients.length;
+      html += '<div class="ritem" data-id="' + id + '">';
+      html += '<div class="rname">' + esc(p.product_name) + '</div>';
+      html += '<div class="rmeta">' + esc(brand) + '<span style="color:var(--green);font-size:10px">● ' + nutCount + ' nutrients</span></div>';
+      html += '<div class="rcal">' + (cal > 0 ? Math.round(cal) + ' kcal/100g' : 'no calorie data') + '</div>';
+      html += '</div>';
+    });
+    rs.innerHTML = html;
+
+    // Use event delegation — one listener on the container, no inline onclick
+    rs.addEventListener('click', function(e) {
+      var item = e.target.closest('.ritem');
+      if (item) openModal(item.dataset.id);
+    });
 
   } catch(e) {
     sp.classList.remove('on');
@@ -601,8 +604,8 @@ async function search(q) {
 
 // ── MODAL ──
 function openModal(fdcId) {
-  selFood = window._srMap[fdcId]; curUnit = 'g';
-  if (!selFood) return;
+  selFood = window._srMap[fdcId] || window._srMap[String(fdcId)]; curUnit = 'g';
+  if (!selFood) { console.error('No food for id:', fdcId, 'Keys:', Object.keys(window._srMap||{})); return; }
   document.getElementById('mamt').value = 100;
   document.getElementById('mname').textContent = selFood.description;
   // DEBUG: show nutrient count in modal subtitle
