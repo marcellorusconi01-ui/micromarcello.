@@ -604,7 +604,6 @@ async function doSearch(q){
   const sp=document.getElementById('searchSpinner'),rs=document.getElementById('search-results');
   sp.classList.add('show'); rs.innerHTML='';
   try{
-    // Two parallel requests: whole foods first, branded second
     const [r1,r2] = await Promise.all([
       fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=10&dataType=Foundation,SR%20Legacy`),
       fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_KEY}&query=${encodeURIComponent(q)}&pageSize=8&dataType=Branded`)
@@ -613,6 +612,24 @@ async function doSearch(q){
     sp.classList.remove('show');
     const merged = [...(d1.foods||[]), ...(d2.foods||[])].slice(0,15);
     if(!merged.length){rs.innerHTML='<div class="empty"><p>No results found.</p></div>';return;}
+
+    // DEBUG: fetch full detail for first result immediately to show what we get
+    if(merged[0]) {
+      try {
+        const testId = merged[0].fdcId;
+        const testRes = await fetch(`https://api.nal.usda.gov/fdc/v1/food/${testId}?api_key=${USDA_KEY}`);
+        const testFull = await testRes.json();
+        const nutCount = testFull.foodNutrients?.length || 0;
+        const sampleNut = testFull.foodNutrients?.[0];
+        showDebug(
+          'fdcId:' + testId + ' | nutrients:' + nutCount +
+          ' | sample:' + JSON.stringify(sampleNut).substring(0,120)
+        );
+      } catch(de) {
+        showDebug('DETAIL FETCH ERROR: ' + de.message + ' | fdcId was: ' + merged[0].fdcId);
+      }
+    }
+
     rs.innerHTML=merged.map((f,i)=>{
       const c=gn(f,1008);
       const br=f.brandOwner?`<span style="color:var(--accent);font-size:10px">${esc(f.brandOwner)}</span> · `:'';
@@ -627,7 +644,7 @@ async function doSearch(q){
       </div>`;
     }).join('');
     window._sr=merged;
-  }catch(e){sp.classList.remove('show');rs.innerHTML='<div class="empty"><p>Search failed. Check connection.</p></div>';}
+  }catch(e){sp.classList.remove('show');rs.innerHTML='<div class="empty"><p>Search failed: '+e.message+'</p></div>';}
 }
 async function openModal(i){
   const preview = window._sr[i];
