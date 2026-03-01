@@ -1,15 +1,8 @@
-const CACHE = 'nutritrack-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap'
-];
+// NutriTrack Service Worker — network-first for HTML, cache-first for assets
+const CACHE = 'nutritrack-v3';
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
@@ -21,17 +14,31 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Network-first for API calls
-  if (e.request.url.includes('api.nal.usda.gov') || e.request.url.includes('supabase.co')) {
-    e.respondWith(fetch(e.request).catch(() => new Response('{}', { headers: { 'Content-Type': 'application/json' } })));
+  const url = e.request.url;
+
+  // Always network-first for HTML — ensures updates show immediately
+  if (e.request.destination === 'document' || url.endsWith('.html') || url.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    );
     return;
   }
-  // Cache-first for assets
+
+  // Always network for API calls
+  if (url.includes('api.nal.usda.gov') || url.includes('supabase.co')) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
+  // Cache-first for fonts and static assets
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-      const clone = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, clone));
-      return res;
-    }))
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      });
+    })
   );
 });
