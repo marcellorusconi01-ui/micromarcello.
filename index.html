@@ -517,47 +517,45 @@ async function search(q) {
   const sp = document.getElementById('spinner'), rs = document.getElementById('results');
   sp.classList.add('on'); rs.innerHTML = '';
   try {
-    const r = await fetch(
-      'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY +
-      '&query=' + encodeURIComponent(q) +
-      '&pageSize=15&dataType=SR%20Legacy,Foundation,Branded'
-    );
-    const d = await r.json();
+    // Two separate calls: SR Legacy first (most complete data), then Foundation+Branded
+    const [r1, r2] = await Promise.all([
+      fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY + '&query=' + encodeURIComponent(q) + '&pageSize=8&dataType=SR%20Legacy'),
+      fetch('https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' + KEY + '&query=' + encodeURIComponent(q) + '&pageSize=8&dataType=Foundation,Branded')
+    ]);
+    const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
     sp.classList.remove('on');
-    const foods = d.foods || [];
+
+    // SR Legacy first, then Foundation, then Branded — no sorting needed
+    const srLegacy   = (d1.foods || []);
+    const rest       = (d2.foods || []).filter(f => !srLegacy.some(s => s.fdcId === f.fdcId));
+    const foods      = [...srLegacy, ...rest].slice(0, 15);
+
     if (!foods.length) { rs.innerHTML = '<div class="empty"><p>No results found.</p></div>'; return; }
-    // Sort: whole foods first, beverages/juices last
-    const sorted = [...foods].sort((a, b) => {
-      const aJunk = /beverage|drink|juice|cocktail/i.test(a.description);
-      const bJunk = /beverage|drink|juice|cocktail/i.test(b.description);
-      const aWhole = a.dataType === 'Foundation' || a.dataType === 'SR Legacy';
-      const bWhole = b.dataType === 'Foundation' || b.dataType === 'SR Legacy';
-      if (aJunk && !bJunk) return 1;
-      if (!aJunk && bJunk) return -1;
-      if (aWhole && !bWhole) return -1;
-      if (!aWhole && bWhole) return 1;
-      return 0;
-    });
-    // Store by fdcId to avoid index mismatch bugs
+
     window._srMap = {};
-    sorted.forEach(f => { window._srMap[f.fdcId] = f; });
-    rs.innerHTML = sorted.map((f) => {
+    foods.forEach(f => { window._srMap[f.fdcId] = f; });
+
+    rs.innerHTML = foods.map((f) => {
       const cal = getKcal(f);
-      const isWhole = f.dataType === 'Foundation' || f.dataType === 'SR Legacy';
-      const badge = isWhole
-        ? '<span style="color:var(--green);font-size:10px">● Whole food</span>'
-        : '<span style="color:var(--text3);font-size:10px">Branded</span>';
-      return `<div class="ritem" onclick="openModal(${f.fdcId})">
-        <div class="rname">${esc(f.description)}</div>
-        <div class="rmeta">${f.brandOwner ? esc(f.brandOwner) + ' · ' : ''}${badge}</div>
-        <div class="rcal">${cal > 0 ? Math.round(cal) + ' kcal/100g' : 'no calorie data'}</div>
-      </div>`;
+      const isSR = f.dataType === 'SR Legacy';
+      const isWhole = isSR || f.dataType === 'Foundation';
+      const badge = isSR
+        ? '<span style="color:var(--green);font-size:10px">● SR Legacy (full data)</span>'
+        : isWhole
+          ? '<span style="color:var(--yellow);font-size:10px">● Foundation</span>'
+          : '<span style="color:var(--text3);font-size:10px">Branded</span>';
+      return '<div class="ritem" onclick="openModal(' + f.fdcId + ')">' +
+        '<div class="rname">' + esc(f.description) + '</div>' +
+        '<div class="rmeta">' + (f.brandOwner ? esc(f.brandOwner) + ' · ' : '') + badge + '</div>' +
+        '<div class="rcal">' + (cal > 0 ? Math.round(cal) + ' kcal/100g' : 'no calorie data') + '</div>' +
+        '</div>';
     }).join('');
   } catch(e) {
     sp.classList.remove('on');
     rs.innerHTML = '<div class="empty"><p>Search failed: ' + e.message + '</p></div>';
   }
 }
+
 
 // ── MODAL ──
 function openModal(fdcId) {
