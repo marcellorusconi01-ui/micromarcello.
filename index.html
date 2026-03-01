@@ -538,14 +538,16 @@ async function search(q) {
       if (!aWhole && bWhole) return 1;
       return 0;
     });
-    window._sr = sorted;
-    rs.innerHTML = sorted.map((f, i) => {
+    // Store by fdcId to avoid index mismatch bugs
+    window._srMap = {};
+    sorted.forEach(f => { window._srMap[f.fdcId] = f; });
+    rs.innerHTML = sorted.map((f) => {
       const cal = getKcal(f);
       const isWhole = f.dataType === 'Foundation' || f.dataType === 'SR Legacy';
       const badge = isWhole
         ? '<span style="color:var(--green);font-size:10px">● Whole food</span>'
         : '<span style="color:var(--text3);font-size:10px">Branded</span>';
-      return `<div class="ritem" onclick="openModal(${i})">
+      return `<div class="ritem" onclick="openModal(${f.fdcId})">
         <div class="rname">${esc(f.description)}</div>
         <div class="rmeta">${f.brandOwner ? esc(f.brandOwner) + ' · ' : ''}${badge}</div>
         <div class="rcal">${cal > 0 ? Math.round(cal) + ' kcal/100g' : 'no calorie data'}</div>
@@ -558,8 +560,9 @@ async function search(q) {
 }
 
 // ── MODAL ──
-function openModal(i) {
-  selFood = window._sr[i]; curUnit = 'g';
+function openModal(fdcId) {
+  selFood = window._srMap[fdcId]; curUnit = 'g';
+  if (!selFood) return;
   document.getElementById('mamt').value = 100;
   document.getElementById('mname').textContent = selFood.description;
   // DEBUG: show nutrient count in modal subtitle
