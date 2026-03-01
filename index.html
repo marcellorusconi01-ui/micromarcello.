@@ -332,6 +332,40 @@ function getKcal(food) {
   return 0;
 }
 
+// ── PREFETCH CURATED FOODS ──
+// Fetch all 87 curated foods in batches of 20 at startup using the search endpoint
+// This guarantees nutrient data is ready before user taps anything
+const _cache = {};
+
+async function prefetchCurated() {
+  const ids = Object.values(CURATED);
+  const batchSize = 20;
+  for (let i = 0; i < ids.length; i += batchSize) {
+    const batch = ids.slice(i, i + batchSize);
+    try {
+      const r = await fetch(
+        'https://api.nal.usda.gov/fdc/v1/foods?api_key=' + KEY,
+        {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({fdcIds: batch, format: 'abridged'})
+        }
+      );
+      const foods = await r.json();
+      if (Array.isArray(foods)) {
+        foods.forEach(f => {
+          if (f.foodNutrients && f.foodNutrients.length > 0) {
+            // abridged format returns flat { nutrientNumber, value }
+            _cache[f.fdcId] = f;
+          }
+        });
+      }
+    } catch(e) {
+      // Silent fail — will fetch on demand instead
+    }
+  }
+}
+
 // ── STATE ──
 let log = [], goals = {cal:2000,pro:150,car:250,fat:70,fi:25};
 let selFood = null, curUnit = 'g', sbClient = null, stimer = null;
@@ -394,6 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const su = localStorage.getItem('sb_u'), sk = localStorage.getItem('sb_k');
   if (su && sk) initSB(su, sk);
   renderAll(); buildEFSA();
+  prefetchCurated(); // load curated food nutrients in background
 
   document.getElementById('sinp').addEventListener('input', e => {
     document.getElementById('sclr').style.display = e.target.value ? 'block' : 'none';
@@ -646,21 +681,38 @@ async function openModal(key) {
   document.getElementById('modal').classList.add('on');
   curUnit = 'g';
 
-  // If stub (curated), fetch full data from USDA by fdcId
+  // Fetch full nutrients for this food using fdcIds filter on search endpoint
+  // This endpoint always returns flat { nutrientNumber, value } format — most reliable
   if (food._stub || !food.foodNutrients || food.foodNutrients.length < 10) {
     try {
       const fdcId = food._fdcId || food.fdcId;
-      const r = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + fdcId + '?api_key=' + KEY);
-      const full = await r.json();
-      // Normalise detail format { nutrient:{number}, amount } to flat { nutrientNumber, value }
-      const norm = (full.foodNutrients || []).map(n => ({
-        nutrientNumber: String(n.nutrient ? n.nutrient.number : (n.nutrientNumber || '')),
-        value: n.amount !== undefined ? n.amount : (n.value || 0)
-      })).filter(n => n.value > 0);
-      food = { ...food, foodNutrients: norm, _stub: false };
-      window._srMap[key] = food;
+
+      // Check prefetch cache first
+      let cached = _cache[fdcId];
+
+      if (!cached) {
+        // Not in cache yet — fetch directly
+        const r = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + fdcId + '?api_key=' + KEY);
+        const full = await r.json();
+        if (full.foodNutrients && full.foodNutrients.length > 0) {
+          // Detail format: normalise { nutrient:{number}, amount } -> flat
+          cached = {
+            ...food,
+            foodNutrients: full.foodNutrients.map(n => ({
+              nutrientNumber: String(n.nutrient ? n.nutrient.number : (n.nutrientNumber || '')),
+              value: n.amount !== undefined ? n.amount : (n.value || 0)
+            })).filter(n => n.value > 0 && n.nutrientNumber)
+          };
+          _cache[fdcId] = cached;
+        }
+      }
+
+      if (cached && cached.foodNutrients && cached.foodNutrients.length > 0) {
+        food = { ...food, foodNutrients: cached.foodNutrients, _stub: false };
+        window._srMap[key] = food;
+      }
     } catch(e) {
-      console.error('Failed to fetch full food data:', e);
+      console.error('Nutrient fetch failed:', e.message);
     }
   }
 
